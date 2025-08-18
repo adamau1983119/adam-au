@@ -119,14 +119,24 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                 onClick = {
                     if (question.value.isBlank()) return@Button
                     // 驗證日期時間格式：yyyy-MM-dd 與 HH:mm，禁止使用 '/'
-                    fun validDate(s: String): Boolean = try {
+                    fun validDate(s: String): Boolean {
                         if (!s.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) return false
-                        val f = SimpleDateFormat("yyyy-MM-dd", Locale.US); f.isLenient = false; f.parse(s); true
-                    } catch (_: Exception) { false }
-                    fun validTime(s: String): Boolean = try {
+                        return try {
+                            val f = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                            f.isLenient = false
+                            f.parse(s)
+                            true
+                        } catch (_: Exception) { false }
+                    }
+                    fun validTime(s: String): Boolean {
                         if (!s.matches(Regex("\\d{2}:\\d{2}"))) return false
-                        val f = SimpleDateFormat("HH:mm", Locale.US); f.isLenient = false; f.parse(s); true
-                    } catch (_: Exception) { false }
+                        return try {
+                            val f = SimpleDateFormat("HH:mm", Locale.US)
+                            f.isLenient = false
+                            f.parse(s)
+                            true
+                        } catch (_: Exception) { false }
+                    }
                     val errors = mutableListOf<String>()
                     if (!validDate(birthdate)) errors.add("出生日期請用 yyyy-MM-dd（例如 1983-01-19）")
                     if (!validTime(birthtime)) errors.add("出生時間請用 HH:mm（例如 08:30）")
