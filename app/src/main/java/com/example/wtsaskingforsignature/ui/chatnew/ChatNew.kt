@@ -45,8 +45,11 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
             .padding(16.dp)
     ) {
         // 標題：第X靈簽：名稱（若之後能帶入 title 再替換）
+        val saved = nav.currentBackStackEntry?.savedStateHandle
+        val titleFromPrev = saved?.get<String>("chat_title")
+        val contextFromPrev = saved?.get<String>("chat_context")
         Text(
-            text = "第 ${id} 靈簽",
+            text = titleFromPrev ?: "第 ${id} 靈簽",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -158,6 +161,9 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                         val enriched = buildString {
                             if (history.isNotBlank()) {
                                 append("【既有對話】\n").append(history).append("\n\n")
+                            }
+                            if (!contextFromPrev.isNullOrBlank()) {
+                                append("【籤文依據】\n").append(contextFromPrev).append("\n\n")
                             }
                             append("【基本資料】")
                             append("\n姓名：").append(name)

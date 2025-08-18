@@ -771,7 +771,14 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
 			OutlinedButton(
-				onClick = { nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id)) },
+				onClick = {
+					// 傳遞籤文內容與標題給新版對話頁，作為 DeepSeek 解籤依據
+					val rawForChat = content.value?.content ?: ""
+					val titleForChat = titleText
+					nav.currentBackStackEntry?.savedStateHandle?.set("chat_context", rawForChat)
+					nav.currentBackStackEntry?.savedStateHandle?.set("chat_title", titleForChat)
+					nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id))
+				},
 				modifier = Modifier.fillMaxWidth()
 			) { Text("deekseek解签") }
 		}
