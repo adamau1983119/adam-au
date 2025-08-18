@@ -81,6 +81,11 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                 OutlinedTextField(value = birthdate, onValueChange = { birthdate = it }, modifier = Modifier.weight(1f), label = { Text("出生日期 YYYY-MM-DD") })
                 OutlinedTextField(value = birthtime, onValueChange = { birthtime = it }, modifier = Modifier.weight(1f), label = { Text("出生時間 HH:mm") })
             }
+            // 顯示最近一次輸入的問題
+            if (question.value.isNotBlank()) {
+                Spacer(Modifier.height(6.dp))
+                Text("目前問題：${question.value}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
         Spacer(Modifier.height(12.dp))
 
@@ -145,7 +150,15 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                     loading.value = true
                     error.value = null
                     scope.launch {
+                        // 將歷史訊息合併成上下文，讓 DeepSeek 綜合回覆
+                        val history = if (messages.isEmpty()) "" else messages.joinToString("\n") { m ->
+                            val who = if (m.role.lowercase().contains("assistant")) "AI" else "我"
+                            "[$who] ${m.content}"
+                        }
                         val enriched = buildString {
+                            if (history.isNotBlank()) {
+                                append("【既有對話】\n").append(history).append("\n\n")
+                            }
                             append("【基本資料】")
                             append("\n姓名：").append(name)
                             append(" 年齡：").append(age)
