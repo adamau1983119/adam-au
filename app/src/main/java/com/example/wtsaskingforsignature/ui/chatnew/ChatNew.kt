@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.foundation.clickable
 
 @Composable
 fun ChatScreenNew(nav: NavHostController, id: Int) {
@@ -54,6 +55,30 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(Modifier.height(8.dp))
+
+        // 籤文依據（可展開）
+        if (!contextFromPrev.isNullOrBlank()) {
+            var expanded by remember { mutableStateOf(false) }
+            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(12.dp)) {
+                    Row(
+                        Modifier.fillMaxWidth().clickable { expanded = !expanded },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("籤文依據（${if (expanded) "收起" else "可展開"}）", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    val preview = if (expanded) contextFromPrev else contextFromPrev.lines().take(3).joinToString("\n")
+                    Text(preview, style = MaterialTheme.typography.bodySmall)
+                    if (!expanded && contextFromPrev.lines().size > 3) {
+                        Spacer(Modifier.height(4.dp))
+                        Text("…（點擊展開全文）", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+        }
 
         // Quick suggestion chips
         val suggestions = listOf("重點摘要", "吉凶解讀", "行動建議", "注意事項", "一句忠告")
