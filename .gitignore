@@ -1,0 +1,7 @@
+﻿# Local dev artifacts
+.gradle/
+.idea/
+.vscode/
+build/
+app/build/
+MyFirstApp/
