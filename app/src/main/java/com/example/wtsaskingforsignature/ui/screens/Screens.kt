@@ -780,6 +780,10 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 				ctx.startActivity(intent)
 			}, modifier = Modifier.fillMaxWidth()) { Text("前往對話界面") }
 		}
+		Spacer(Modifier.height(12.dp))
+		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+			OutlinedButton(onClick = { nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id)) }, modifier = Modifier.fillMaxWidth()) { Text("前往 DeepSeek 對話（新）") }
+		}
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 			OutlinedButton(onClick = { nav.navigateUp() }) { Text("返回") }
