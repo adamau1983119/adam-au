@@ -41,9 +41,9 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
             )
             .padding(16.dp)
     ) {
-        // Header
+        // 標題：第X靈籤：名稱（若之後能帶入 title 再替換）
         Text(
-            text = "DeepSeek 對話 — 第 ${id} 靈簽",
+            text = "第 ${id} 靈簽",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -54,6 +54,29 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             suggestions.forEach { s ->
                 AssistChip(onClick = { question.value = s }, label = { Text(s) })
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+
+        // 使用者基本資料區（姓名、年齡、出生地、日期、時間）
+        var name by remember { mutableStateOf("") }
+        var age by remember { mutableStateOf("") }
+        var birthplace by remember { mutableStateOf("") }
+        var birthdate by remember { mutableStateOf("") }
+        var birthtime by remember { mutableStateOf("") }
+        Column(Modifier.fillMaxWidth()) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(value = name, onValueChange = { name = it }, modifier = Modifier.weight(1f), label = { Text("姓名") })
+                OutlinedTextField(value = age, onValueChange = { age = it }, modifier = Modifier.width(100.dp), label = { Text("年齡") })
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(value = birthplace, onValueChange = { birthplace = it }, modifier = Modifier.weight(1f), label = { Text("出生地") })
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(value = birthdate, onValueChange = { birthdate = it }, modifier = Modifier.weight(1f), label = { Text("出生日期 YYYY-MM-DD") })
+                OutlinedTextField(value = birthtime, onValueChange = { birthtime = it }, modifier = Modifier.weight(1f), label = { Text("出生時間 HH:mm") })
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -95,7 +118,16 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                     loading.value = true
                     error.value = null
                     scope.launch {
-                        val res = withContext(Dispatchers.IO) { ServiceLocator.repository.chat(id, question.value) }
+                        val enriched = buildString {
+                            append("【基本資料】")
+                            append("\n姓名：").append(name)
+                            append(" 年齡：").append(age)
+                            append(" 出生地：").append(birthplace)
+                            append(" 出生日期：").append(birthdate)
+                            append(" 出生時間：").append(birthtime)
+                            append("\n【問題】").append(question.value)
+                        }
+                        val res = withContext(Dispatchers.IO) { ServiceLocator.repository.chat(id, enriched) }
                         res.onSuccess { resp ->
                             messages.clear()
                             messages.addAll(resp.messages)
