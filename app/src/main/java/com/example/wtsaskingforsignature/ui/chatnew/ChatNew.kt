@@ -175,6 +175,10 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                     if (!validTime(birthtime)) errors.add("出生時間請用 HH:mm（例如 08:30）")
                     if (errors.isNotEmpty()) { dialogMsg = errors.joinToString("\n"); return@Button }
 
+                    // 先把使用者訊息加入畫面，提升即時回饋感
+                    val userQuestion = question.value
+                    messages.add(ChatMessage(role = "user", content = userQuestion))
+
                     loading.value = true
                     error.value = null
                     scope.launch {
@@ -197,18 +201,19 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                             append(" 出生日期：").append(birthdate)
                             append(" 出生時間：").append(birthtime)
                             append("\n【分析規則】請以『該支籤文』為核心，結合紫微斗數的大數據經驗法則（僅根據出生日期、時間與地點的近似經度），給出個人化且審慎的解讀。避免絕對斷語，以『傾向／可能／建議』表述。輸出格式：\n1) 核心解讀：3 點。\n2) 紫微斗數關聯：2~3 點（可提及命宮／事業／財帛／感情等關鍵詞，僅作參考）。\n3) 行動建議：條列 3~5 條。\n4) 避險提醒：2 點。\n字數 200~400。")
-                            append("\n【問題】").append(question.value)
+                            append("\n【問題】").append(userQuestion)
                         }
                         val res = withContext(Dispatchers.IO) { ServiceLocator.repository.chat(id, enriched) }
                         res.onSuccess { resp ->
-                            messages.clear()
-                            messages.addAll(resp.messages)
-                            question.value = ""
+                            // 只追加 AI 回覆，保留完整歷史
+                            val assistants = resp.messages.filter { it.role.lowercase().contains("assistant") }
+                            if (assistants.isNotEmpty()) messages.addAll(assistants)
                         }.onFailure { e ->
                             WtsLogger.e("chat() failed: ${e.message}")
                             error.value = e.message
                         }
                         loading.value = false
+                        question.value = ""
                     }
                 },
                 enabled = !loading.value
