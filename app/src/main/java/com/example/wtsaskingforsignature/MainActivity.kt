@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.wtsaskingforsignature.ui.screens.*
+import com.example.wtsaskingforsignature.ui.chatnew.ChatScreenNew
 import com.example.wtsaskingforsignature.ui.theme.WtsTheme
 import com.example.wtsaskingforsignature.util.WtsLogger
 
@@ -42,10 +43,12 @@ object Routes {
 	const val RESULT = "result/{valid}"
 	const val CONTENT = "content/{id}"
 	const val CHAT = "chat/{id}"
+	const val CHAT_NEW = "chat_new/{id}"
 
 	fun content(id: Int) = "content/$id"
 	fun result(valid: Boolean) = "result/$valid"
 	fun chat(id: Int) = "chat/$id"
+	fun chatNew(id: Int) = "chat_new/$id"
 	fun cup(id: Int) = "cup/$id"
 }
 
@@ -101,6 +104,13 @@ fun WtsNavHost(
 		) { backStackEntry ->
 			val id = backStackEntry.arguments?.getInt("id") ?: 1
 			ChatScreen(navController, id)
+		}
+		composable(
+			Routes.CHAT_NEW,
+			arguments = listOf(navArgument("id") { type = NavType.IntType })
+		) { backStackEntry ->
+			val id = backStackEntry.arguments?.getInt("id") ?: 1
+			ChatScreenNew(navController, id)
 		}
 	}
 }
