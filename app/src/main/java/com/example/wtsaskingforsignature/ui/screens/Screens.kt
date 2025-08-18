@@ -770,19 +770,10 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 		}
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-			OutlinedButton(onClick = {
-				val intent = android.content.Intent(ctx, com.example.wtsaskingforsignature.ui.chat.ChatActivity::class.java)
-				intent.putExtra("extra_id", id)
-				// 可選：把前四行簡略帶給 ChatActivity（未來可在 ChatActivity 解析）
-				val raw = content.value?.content ?: ""
-				val first4 = raw.split('\n').take(4).joinToString("\n")
-				intent.putExtra("extra_head4", first4)
-				ctx.startActivity(intent)
-			}, modifier = Modifier.fillMaxWidth()) { Text("前往對話界面") }
-		}
-		Spacer(Modifier.height(12.dp))
-		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id)) }, modifier = Modifier.fillMaxWidth()) { Text("前往 DeepSeek 對話（新）") }
+			OutlinedButton(
+				onClick = { nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id)) },
+				modifier = Modifier.fillMaxWidth()
+			) { Text("deekseek解签") }
 		}
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
