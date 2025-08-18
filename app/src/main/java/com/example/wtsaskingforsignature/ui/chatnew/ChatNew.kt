@@ -81,7 +81,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
         }
 
         // Quick suggestion chips
-        val suggestions = listOf("重點摘要", "吉凶解讀", "行動建議", "注意事項", "一句忠告")
+        val suggestions = listOf("重點摘要", "吉凶解讀", "行動建議", "注意事項", "一句忠告", "紫微斗數綜合")
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             suggestions.forEach { s ->
                 AssistChip(onClick = { question.value = s }, label = { Text(s) })
@@ -196,6 +196,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                             append(" 出生地：").append(birthplace)
                             append(" 出生日期：").append(birthdate)
                             append(" 出生時間：").append(birthtime)
+                            append("\n【分析規則】請以『該支籤文』為核心，結合紫微斗數的大數據經驗法則（僅根據出生日期、時間與地點的近似經度），給出個人化且審慎的解讀。避免絕對斷語，以『傾向／可能／建議』表述。輸出格式：\n1) 核心解讀：3 點。\n2) 紫微斗數關聯：2~3 點（可提及命宮／事業／財帛／感情等關鍵詞，僅作參考）。\n3) 行動建議：條列 3~5 條。\n4) 避險提醒：2 點。\n字數 200~400。")
                             append("\n【問題】").append(question.value)
                         }
                         val res = withContext(Dispatchers.IO) { ServiceLocator.repository.chat(id, enriched) }
