@@ -24,6 +24,8 @@ import com.example.wtsaskingforsignature.util.WtsLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun ChatScreenNew(nav: NavHostController, id: Int) {
@@ -32,6 +34,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
     val question = remember { mutableStateOf("") }
     val loading = remember { mutableStateOf(false) }
     val error = remember { mutableStateOf<String?>(null) }
+    var dialogMsg by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -41,7 +44,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
             )
             .padding(16.dp)
     ) {
-        // 標題：第X靈籤：名稱（若之後能帶入 title 再替換）
+        // 標題：第X靈簽：名稱（若之後能帶入 title 再替換）
         Text(
             text = "第 ${id} 靈簽",
             style = MaterialTheme.typography.headlineMedium,
@@ -115,6 +118,20 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
             Button(
                 onClick = {
                     if (question.value.isBlank()) return@Button
+                    // 驗證日期時間格式：yyyy-MM-dd 與 HH:mm，禁止使用 '/'
+                    fun validDate(s: String): Boolean = try {
+                        if (!s.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) return false
+                        val f = SimpleDateFormat("yyyy-MM-dd", Locale.US); f.isLenient = false; f.parse(s); true
+                    } catch (_: Exception) { false }
+                    fun validTime(s: String): Boolean = try {
+                        if (!s.matches(Regex("\\d{2}:\\d{2}"))) return false
+                        val f = SimpleDateFormat("HH:mm", Locale.US); f.isLenient = false; f.parse(s); true
+                    } catch (_: Exception) { false }
+                    val errors = mutableListOf<String>()
+                    if (!validDate(birthdate)) errors.add("出生日期請用 yyyy-MM-dd（例如 1983-01-19）")
+                    if (!validTime(birthtime)) errors.add("出生時間請用 HH:mm（例如 08:30）")
+                    if (errors.isNotEmpty()) { dialogMsg = errors.joinToString("\n"); return@Button }
+
                     loading.value = true
                     error.value = null
                     scope.launch {
@@ -141,6 +158,15 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                 },
                 enabled = !loading.value
             ) { Text(if (loading.value) "傳送中..." else "發送") }
+        }
+
+        if (dialogMsg != null) {
+            AlertDialog(
+                onDismissRequest = { dialogMsg = null },
+                confirmButton = { TextButton(onClick = { dialogMsg = null }) { Text("確定") } },
+                title = { Text("輸入格式錯誤") },
+                text = { Text(dialogMsg!!) }
+            )
         }
 
         Spacer(Modifier.height(8.dp))
