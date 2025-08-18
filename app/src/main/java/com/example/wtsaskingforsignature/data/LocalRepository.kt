@@ -243,20 +243,37 @@ class LocalRepository : Repository {
 	}
 
 	override suspend fun chat(fortuneId: Int, question: String): Result<ChatResponse> = runCatching {
+		tryLoadFromAssetsOnce()
 		val trimmed = question.trim()
-		// 從問題中擷取 ChatActivity 附帶的籤文首句（若存在）
-		val firstLine = Regex("【籤文首句】(.*)").find(trimmed)?.groupValues?.getOrNull(1)?.trim() ?: ""
-		val parts = mutableListOf<String>()
-		if (firstLine.isNotBlank()) parts += "籤文首句：$firstLine"
-		parts += "綜合第${fortuneId}籤意，宜先穩後進、審時度勢。遇事以德行與誠意為本，先處理核心風險，再逐步擴張。"
-		parts += "建議：\n1) 釐清目標與時程，先完成短期可控成果。\n2) 與關鍵人保持溝通，求同存異。\n3) 善用既有資源與專長，避免貿然轉向。\n4) 每週檢視成果與阻礙，微調策略。"
-		parts += "總結：保持耐心與秩序，累積小勝即成大勢。"
-		val answer = parts.joinToString("\n\n").let { if (it.length > 500) it.take(500) else it }
-		ChatResponse(
-			messages = listOf(
-				ChatMessage(role = "user", content = trimmed.take(500)),
-				ChatMessage(role = "assistant", content = answer)
-			)
-		)
+		val fortune = fortunes.firstOrNull { it.id == fortuneId }
+		val title = fortune?.title ?: "第${fortuneId}籤"
+		val content = fortune?.content ?: ""
+		// 解析富含結構的提示：既有對話 / 籤文依據 / 問題
+		val ctx = Regex("【籤文依據】([\\s\\S]*?)【", RegexOption.MULTILINE).find(trimmed)?.groupValues?.getOrNull(1)?.trim()
+			?: Regex("【籤文依據】([\\s\\S]*)$", RegexOption.MULTILINE).find(trimmed)?.groupValues?.getOrNull(1)?.trim()
+		val ques = Regex("【問題】([\\s\\S]*)$", RegexOption.MULTILINE).find(trimmed)?.groupValues?.getOrNull(1)?.trim() ?: trimmed
+		val seed = (ques.hashCode() xor fortuneId).toLong()
+		val r = kotlin.random.Random(seed)
+		val tone = listOf("審慎進取","穩中求進","先難後易","以德化之")[r.nextInt(4)]
+		val keyTips = listOf(
+			"先處理核心風險，再擬定兩步計劃（當月/季度）",
+			"與關鍵人保持溝通，避免單線決策",
+			"善用現有資源與強項，少做顛覆式變動",
+			"每週檢視進度，微調節奏與優先順序"
+		).shuffled(r).take(3)
+		val ctxPreview = (ctx?.lines() ?: content.lines()).take(2).joinToString("\n").ifBlank { content.lines().take(2).joinToString("\n") }
+		val answer = buildString {
+			append("【解讀依據】\n").append(title).append('\n').append(ctxPreview).append("\n\n")
+			append("【你的問題】").append(ques.take(200)).append("\n\n")
+			append("【綜合解讀（").append(tone).append("）】\n")
+			append("此籤意提示：持正念、順勢而為。於當前階段，宜先穩住基本盤，再逐步拓展。\n\n")
+			append("【行動建議】\n")
+			keyTips.forEachIndexed { i, s -> append(i+1).append(") ").append(s).append('\n') }
+			append("\n【結語】以善意與耐心累積小勝，可轉動更大的局勢。")
+		}.let { if (it.length > 600) it.take(600) else it }
+		ChatResponse(messages = listOf(
+			ChatMessage(role = "user", content = ques.take(500)),
+			ChatMessage(role = "assistant", content = answer)
+		))
 	}
 }
