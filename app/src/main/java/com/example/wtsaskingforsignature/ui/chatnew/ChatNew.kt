@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.wtsaskingforsignature.ui.theme.MdGradientBottom
+import com.example.wtsaskingforsignature.ui.theme.MdGradientTop
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -27,6 +29,11 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.compose.foundation.clickable
+import com.example.wtsaskingforsignature.ui.components.GlassCard
+import com.example.wtsaskingforsignature.ui.components.WtsPrimaryButton
+import com.example.wtsaskingforsignature.ui.components.WtsOutlinedTextField
+import com.example.wtsaskingforsignature.ui.components.WtsWhiteButton
+import com.example.wtsaskingforsignature.ui.components.WtsFrostedChoiceButton
 
 @Composable
 fun ChatScreenNew(nav: NavHostController, id: Int) {
@@ -40,9 +47,6 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(listOf(Color(0xFFF7ECEB), Color(0xFFF1E4E7)))
-            )
             .padding(16.dp)
     ) {
         // 標題：第X靈簽：名稱（若之後能帶入 title 再替換）
@@ -59,7 +63,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
         // 籤文依據（可展開）
         if (!contextFromPrev.isNullOrBlank()) {
             var expanded by remember { mutableStateOf(false) }
-            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+            GlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(12.dp)) {
                     Row(
                         Modifier.fillMaxWidth().clickable { expanded = !expanded },
@@ -95,24 +99,93 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
         var birthplace by remember { mutableStateOf("") }
         var birthdate by remember { mutableStateOf("") }
         var birthtime by remember { mutableStateOf("") }
+        var birthPeriod by remember { mutableStateOf<String?>(null) }
+        var skipPersonalInfo by remember { mutableStateOf(false) }
+        
         Column(Modifier.fillMaxWidth()) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = name, onValueChange = { name = it }, modifier = Modifier.weight(1f), label = { Text("姓名") })
-                OutlinedTextField(value = age, onValueChange = { age = it }, modifier = Modifier.width(100.dp), label = { Text("年齡") })
+            // 添加跳過個人資料的按鈕
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                WtsWhiteButton(
+                    text = if (skipPersonalInfo) "填寫個人資料" else "直接提問Deepseek",
+                    onClick = { skipPersonalInfo = !skipPersonalInfo },
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
             }
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = birthplace, onValueChange = { birthplace = it }, modifier = Modifier.weight(1f), label = { Text("出生地") })
-            }
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = birthdate, onValueChange = { birthdate = it }, modifier = Modifier.weight(1f), label = { Text("出生日期 YYYY-MM-DD") })
-                OutlinedTextField(value = birthtime, onValueChange = { birthtime = it }, modifier = Modifier.weight(1f), label = { Text("出生時間 HH:mm") })
-            }
-            // 顯示最近一次輸入的問題
-            if (question.value.isNotBlank()) {
-                Spacer(Modifier.height(6.dp))
-                Text("目前問題：${question.value}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            
+            if (!skipPersonalInfo) {
+                // 第一行：姓名 + 年齡（統一高度）
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    WtsOutlinedTextField(
+                        value = name, 
+                        onValueChange = { name = it }, 
+                        modifier = Modifier.weight(2f), 
+                        label = { Text("姓名") }
+                    )
+                    WtsOutlinedTextField(
+                        value = age, 
+                        onValueChange = { age = it }, 
+                        modifier = Modifier.weight(1f), 
+                        label = { Text("年齡") }
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+                
+                // 第二行：出生地（單獨一行，保持一致性）
+                WtsOutlinedTextField(
+                    value = birthplace, 
+                    onValueChange = { birthplace = it }, 
+                    modifier = Modifier.fillMaxWidth(), 
+                    label = { Text("出生地") }
+                )
+                Spacer(Modifier.height(12.dp))
+                
+                // 第三行：出生日期 + 出生時間（統一高度）
+                var isTimeFieldFocused by remember { mutableStateOf(false) }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    WtsOutlinedTextField(
+                        value = birthdate, 
+                        onValueChange = { birthdate = it }, 
+                        modifier = Modifier.weight(1f), 
+                        label = { Text("出生日期") }
+                    )
+                    WtsOutlinedTextField(
+                        value = birthtime, 
+                        onValueChange = { birthtime = it }, 
+                        modifier = Modifier.weight(1f), 
+                        label = { Text("出生時間") },
+                        onFocusChanged = { isFocused ->
+                            isTimeFieldFocused = isFocused
+                            if (!isFocused) birthPeriod = null
+                        }
+                    )
+                }
+                
+                // 時段選擇按鈕（統一間距）
+                if (isTimeFieldFocused) {
+                    Spacer(Modifier.height(12.dp))
+                    val periods = listOf("凌晨","上午","中午","下午","晚上")
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        periods.forEach { p ->
+                            val selected = birthPeriod == p
+                            WtsFrostedChoiceButton(
+                                text = p, 
+                                selected = selected, 
+                                onClick = { birthPeriod = if (selected) null else p }, 
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+                
+                // 顯示最近一次輸入的問題（統一間距）
+                if (question.value.isNotBlank()) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        "目前問題：${question.value}", 
+                        style = MaterialTheme.typography.labelMedium, 
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -140,7 +213,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedTextField(
+            WtsOutlinedTextField(
                 value = question.value,
                 onValueChange = { question.value = it },
                 modifier = Modifier.weight(1f),
@@ -148,9 +221,9 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                 singleLine = true,
                 supportingText = { Text("${question.value.length}/200") }
             )
-            Button(
+            WtsWhiteButton(
                 onClick = {
-                    if (question.value.isBlank()) return@Button
+                    if (question.value.isBlank()) return@WtsWhiteButton
                     // 驗證日期時間格式：yyyy-MM-dd 與 HH:mm，禁止使用 '/'
                     fun validDate(s: String): Boolean {
                         if (!s.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) return false
@@ -161,19 +234,73 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                             true
                         } catch (_: Exception) { false }
                     }
-                    fun validTime(s: String): Boolean {
-                        if (!s.matches(Regex("\\d{2}:\\d{2}"))) return false
-                        return try {
-                            val f = SimpleDateFormat("HH:mm", Locale.US)
-                            f.isLenient = false
-                            f.parse(s)
-                            true
-                        } catch (_: Exception) { false }
+                    fun normalizeTime(raw: String, period: String?): String? {
+                        if (raw.isBlank() && period == null) return null
+                        val base = raw.trim()
+                        // direct HH:mm
+                        if (base.matches(Regex("^\\d{1,2}:\\d{2}$"))) {
+                            val parts = base.split(":")
+                            val h = parts[0].toInt()
+                            val m = parts[1].toInt()
+                            if (h in 0..23 && m in 0..59) return String.format("%02d:%02d", h, m)
+                            return null
+                        }
+                        // patterns: 上午10點, 下午3點半, 晚上8點, 中午12點
+                        val re = Regex("(凌晨|上午|中午|下午|晚上)?\\s*(\\d{1,2})(點|点)?(?:(?:(:|：)(\\d{1,2}))|(半))?", RegexOption.IGNORE_CASE)
+                        val m = re.find(base)
+                        if (m != null) {
+                            val seg = m.groupValues[1].ifBlank { period ?: "" }
+                            var hour = m.groupValues[2].toIntOrNull() ?: return null
+                            var minute = when {
+                                m.groupValues[6].isNotBlank() -> 30
+                                m.groupValues[5].isNotBlank() -> m.groupValues[5].toIntOrNull() ?: 0
+                                else -> 0
+                            }
+                            // map segment to 24h
+                            val segNorm = when (seg) {
+                                "凌晨" -> 0
+                                "上午" -> 0
+                                "中午" -> 12
+                                "下午" -> 12
+                                "晚上" -> 18 // bias to evening; will adjust below
+                                else -> null
+                            }
+                            var h24 = hour
+                            if (segNorm != null) {
+                                h24 = when (seg) {
+                                    "凌晨" -> if (hour == 12) 0 else hour
+                                    "上午" -> if (hour == 12) 0 else hour
+                                    "中午" -> if (hour < 12) 12 else hour
+                                    "下午" -> if (hour < 12) hour + 12 else hour
+                                    "晚上" -> if (hour < 12) hour + 12 else hour
+                                    else -> hour
+                                }
+                            }
+                            if (h24 in 0..23 && minute in 0..59) return String.format("%02d:%02d", h24, minute)
+                        }
+                        // only period selected, no specific time
+                        if (base.isBlank() && period != null) {
+                            return when (period) {
+                                "凌晨" -> "01:00"
+                                "上午" -> "09:00"
+                                "中午" -> "12:00"
+                                "下午" -> "15:00"
+                                "晚上" -> "20:00"
+                                else -> null
+                            }
+                        }
+                        return null
                     }
                     val errors = mutableListOf<String>()
-                    if (!validDate(birthdate)) errors.add("出生日期請用 yyyy-MM-dd（例如 1983-01-19）")
-                    if (!validTime(birthtime)) errors.add("出生時間請用 HH:mm（例如 08:30）")
-                    if (errors.isNotEmpty()) { dialogMsg = errors.joinToString("\n"); return@Button }
+                    // 只有在不跳過個人資料時才驗證個人資料
+                    if (!skipPersonalInfo) {
+                        if (!validDate(birthdate)) errors.add("出生日期請用 yyyy-MM-dd（例如 1983-01-19）")
+                        val normalizedTime = normalizeTime(birthtime, birthPeriod)
+                        if (birthtime.isNotBlank() || birthPeriod != null) {
+                            if (normalizedTime == null) errors.add("出生時間格式不嚴格限制，可輸入：\n1) HH:mm（例如 08:30）\n2) 上午10點/下午3點半/晚上8點/中午12點\n3) 只選擇時段（凌晨/上午/中午/下午/晚上）")
+                        }
+                    }
+                    if (errors.isNotEmpty()) { dialogMsg = errors.joinToString("\n"); return@WtsWhiteButton }
 
                     // 先把使用者訊息加入畫面，提升即時回饋感
                     val userQuestion = question.value
@@ -194,13 +321,25 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                             if (!contextFromPrev.isNullOrBlank()) {
                                 append("【籤文依據】\n").append(contextFromPrev).append("\n\n")
                             }
-                            append("【基本資料】")
-                            append("\n姓名：").append(name)
-                            append(" 年齡：").append(age)
-                            append(" 出生地：").append(birthplace)
-                            append(" 出生日期：").append(birthdate)
-                            append(" 出生時間：").append(birthtime)
-                            append("\n【分析規則】請以『該支籤文』為核心，結合紫微斗數的大數據經驗法則（僅根據出生日期、時間與地點的近似經度），給出個人化且審慎的解讀。避免絕對斷語，以『傾向／可能／建議』表述。輸出格式：\n1) 核心解讀：3 點。\n2) 紫微斗數關聯：2~3 點（可提及命宮／事業／財帛／感情等關鍵詞，僅作參考）。\n3) 行動建議：條列 3~5 條。\n4) 避險提醒：2 點。\n字數 200~400。")
+                            // 只有在不跳過個人資料時才包含個人資料
+                            if (!skipPersonalInfo) {
+                                append("【基本資料】")
+                                append("\n姓名：").append(name)
+                                append(" 年齡：").append(age)
+                                append(" 出生地：").append(birthplace)
+                                append(" 出生日期：").append(birthdate)
+                                val normalizedTime = normalizeTime(birthtime, birthPeriod)
+                                if (normalizedTime != null) {
+                                    append(" 出生時間：").append(normalizedTime)
+                                } else if (!birthtime.isNullOrBlank()) {
+                                    append(" 出生時間（原始）：").append(birthtime)
+                                } else if (birthPeriod != null) {
+                                    append(" 出生時段：").append(birthPeriod)
+                                }
+                                append("\n【分析規則】請以『該支籤文』為核心，結合紫微斗數的大數據經驗法則（僅根據出生日期、時間與地點的近似經度），給出個人化且審慎的解讀。避免絕對斷語，以『傾向／可能／建議』表述。輸出格式：\n1) 核心解讀：3 點。\n2) 紫微斗數關聯：2~3 點（可提及命宮／事業／財帛／感情等關鍵詞，僅作參考）。\n3) 行動建議：條列 3~5 條。\n4) 避險提醒：2 點。\n字數 200~400。")
+                            } else {
+                                append("【分析規則】請直接回答用戶問題，給出實用且審慎的建議。避免絕對斷語，以『傾向／可能／建議』表述。輸出格式：\n1) 核心回答：3 點。\n2) 實用建議：條列 3~5 條。\n3) 注意事項：2 點。\n字數 200~400。")
+                            }
                             append("\n【問題】").append(userQuestion)
                         }
                         val res = withContext(Dispatchers.IO) { ServiceLocator.repository.chat(id, enriched) }
@@ -216,8 +355,9 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                         question.value = ""
                     }
                 },
-                enabled = !loading.value
-            ) { Text(if (loading.value) "傳送中..." else "發送") }
+                enabled = !loading.value,
+                text = if (loading.value) "傳送中..." else "發送"
+            )
         }
 
         if (dialogMsg != null) {
@@ -231,8 +371,8 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
 
         Spacer(Modifier.height(8.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            OutlinedButton(onClick = { nav.navigateUp() }) { Text("返回") }
-            OutlinedButton(onClick = { nav.navigate("content/${id}") }) { Text("回籤文") }
+            WtsWhiteButton(text = "返回", onClick = { nav.navigateUp() })
+            WtsWhiteButton(text = "回籤文", onClick = { nav.navigate("content/${id}") })
         }
     }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Release 版本專用配置 -->
+    <application
+        android:debuggable="false"
+        android:label="DS 黃大仙靈簽"
+        tools:replace="android:label">
+        
+        <!-- Release 版本使用正式 AdMob Application ID -->
+        <!-- 請替換為您的正式 AdMob Application ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+            
+        <!-- Release 版本禁用明文流量 -->
+        <meta-data
+            android:name="android.net.usesCleartextTraffic"
+            android:value="false" />
+    </application>
+</manifest>

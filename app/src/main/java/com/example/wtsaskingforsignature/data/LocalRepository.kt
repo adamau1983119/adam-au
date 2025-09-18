@@ -7,9 +7,9 @@ import com.example.wtsaskingforsignature.data.api.CupAttempt
 import com.example.wtsaskingforsignature.data.api.CupResultResponse
 import com.example.wtsaskingforsignature.data.api.DrawResponse
 import com.example.wtsaskingforsignature.util.WtsLogger
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+// import com.squareup.moshi.Moshi
+// import com.squareup.moshi.Types
+// import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.io.BufferedReader
 import java.io.StringReader
 import java.io.InputStreamReader
@@ -82,59 +82,130 @@ class LocalRepository : Repository {
 				WtsLogger.i("CSV not found: $assetName, skip")
 				return false
 			}
+			
+			// 使用更简单的CSV解析方法
 			context.assets.open(assetName).use { input ->
-						val bytes = input.readBytes()
-						val text = decodeWithBestCharset(bytes) ?: return false
-						BufferedReader(StringReader(text)).use { br ->
-							// 逐行讀取，但會把位於引號中的換行合併為同一筆記錄
-							val lines = readCsvLogicalLines(br)
-							if (lines.isEmpty()) return false
-							// 去除 UTF-8 BOM，以免表頭第一個欄位帶有不可見字元
-							val header = lines.first().removePrefix("\uFEFF").trim()
-					val expected = listOf("id","title","summary","content")
-					val headerCells = splitCsvLine(header)
-					if (headerCells.map { it.lowercase() } != expected) {
-						WtsLogger.w("CSV header mismatch: $header")
+				val bytes = input.readBytes()
+				val text = decodeWithBestCharset(bytes) ?: return false
+				WtsLogger.i("CSV text length: ${text.length}")
+				
+				// 简单的行分割，处理引号内的换行
+				val lines = parseCsvWithQuotes(text)
+				WtsLogger.i("Parsed CSV lines: ${lines.size}")
+				
+				if (lines.size < 2) {
+					WtsLogger.w("CSV too few lines: ${lines.size}")
+					return false
+				}
+				
+				// 检查表头
+				val header = lines[0]
+				val expected = listOf("id","title","summary","content")
+				val headerCells = header.map { it.trim() }
+				WtsLogger.i("Header: $headerCells")
+				
+				if (headerCells.map { it.lowercase() } != expected) {
+					WtsLogger.w("Header mismatch: expected=$expected, got=${headerCells.map { it.lowercase() }}")
+					return false
+				}
+				
+				val result = mutableListOf<DrawResponse>()
+				val errors = mutableListOf<String>()
+				
+				lines.drop(1).forEachIndexed { idx, row ->
+					if (row.size < 4) {
+						errors += "line ${idx+2}: columns < 4 (got ${row.size})"
+						return@forEachIndexed
 					}
-					val result = mutableListOf<DrawResponse>()
-					val errors = mutableListOf<String>()
-							lines.drop(1).forEachIndexed { idx, raw ->
-						if (raw.isBlank()) return@forEachIndexed
-						val cols = splitCsvLine(raw)
-						if (cols.size < 4) {
-							errors += "line ${idx+2}: column < 4"
-							return@forEachIndexed
-						}
-						val id = cols[0].toIntOrNull()
-						val title = cols[1].trim()
-						val summary = cols[2].trim()
-						val content = cols[3].trim()
-						if (id == null || id !in 1..100) {
-							errors += "line ${idx+2}: invalid id=${cols[0]}"
-							return@forEachIndexed
-						}
-						if (title.isBlank() || summary.isBlank() || content.isBlank()) {
-							errors += "line ${idx+2}: empty field"
-							return@forEachIndexed
-						}
-						result += DrawResponse(id = id, title = title, summary = summary, content = content)
+					
+					val id = row[0].toIntOrNull()
+					val title = row[1].trim()
+					val summary = row[2].trim()
+					val content = row[3].trim()
+					
+					if (id == null || id !in 1..100) {
+						errors += "line ${idx+2}: invalid id=${row[0]}"
+						return@forEachIndexed
 					}
-					if (result.isNotEmpty()) {
-						// 以 id 升序排序並覆蓋
-						fortunes = result.sortedBy { it.id }
-						WtsLogger.i("CSV loaded ${result.size} items, errors=${errors.size}")
-						if (errors.isNotEmpty()) {
-							errors.take(5).forEach { WtsLogger.w(it) }
-						}
-						return true
+					
+					if (title.isBlank() || summary.isBlank() || content.isBlank()) {
+						errors += "line ${idx+2}: empty field"
+						return@forEachIndexed
 					}
+					
+					result += DrawResponse(id = id, title = title, summary = summary, content = content)
+					
+					if (idx < 3) {
+						WtsLogger.i("Line ${idx+2}: id=$id, title='${title.take(30)}'")
+					}
+				}
+				
+				if (result.isNotEmpty()) {
+					fortunes = result.sortedBy { it.id }
+					WtsLogger.i("CSV loaded ${result.size} fortunes, errors=${errors.size}")
+					if (errors.isNotEmpty()) {
+						errors.take(5).forEach { WtsLogger.w(it) }
+					}
+					return true
+				} else {
+					WtsLogger.w("No fortunes loaded from CSV")
 				}
 			}
 			false
 		} catch (t: Throwable) {
 			WtsLogger.e("CSV load exception: ${t.message}")
+			t.printStackTrace()
 			false
 		}
+	}
+	
+	private fun parseCsvWithQuotes(text: String): List<List<String>> {
+		val result = mutableListOf<List<String>>()
+		val lines = text.lines()
+		var currentRow = mutableListOf<String>()
+		var currentField = StringBuilder()
+		var inQuotes = false
+		
+		for (line in lines) {
+			var i = 0
+			while (i < line.length) {
+				val ch = line[i]
+				when (ch) {
+					'"' -> {
+						if (inQuotes && i + 1 < line.length && line[i + 1] == '"') {
+							// 转义双引号
+							currentField.append('"')
+							i++
+						} else {
+							inQuotes = !inQuotes
+						}
+					}
+					',' -> {
+						if (inQuotes) {
+							currentField.append(ch)
+						} else {
+							currentRow.add(currentField.toString().trim())
+							currentField.clear()
+						}
+					}
+					else -> currentField.append(ch)
+				}
+				i++
+			}
+			
+			// 如果不在引号中，说明这一行结束了
+			if (!inQuotes) {
+				currentRow.add(currentField.toString().trim())
+				result.add(currentRow.toList())
+				currentRow.clear()
+				currentField.clear()
+			} else {
+				// 在引号中，添加换行符并继续
+				currentField.append('\n')
+			}
+		}
+		
+		return result
 	}
 
 	private fun readCsvLogicalLines(br: BufferedReader): List<String> {
@@ -171,26 +242,8 @@ class LocalRepository : Repository {
 	}
 
 	private fun tryLoadFromJson() {
-		try {
-			val context = WtsApp.instance
-			context.assets.open("fortunes.json").use { input ->
-				BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { br ->
-					val json = br.readText()
-					val moshi = Moshi.Builder()
-						.addLast(KotlinJsonAdapterFactory())
-						.build()
-					val type = Types.newParameterizedType(List::class.java, DrawResponse::class.java)
-					val adapter = moshi.adapter<List<DrawResponse>>(type)
-					val parsed = adapter.fromJson(json)
-					if (!parsed.isNullOrEmpty()) {
-						fortunes = parsed
-						WtsLogger.i("JSON loaded ${parsed.size} items")
-					}
-				}
-			}
-		} catch (_: Throwable) {
-			// ignore, keep default
-		}
+		// JSON加载功能已移除，只使用CSV数据源
+		WtsLogger.i("JSON loading disabled, using CSV only")
 	}
 
 	private fun splitCsvLine(line: String): List<String> {
@@ -211,13 +264,19 @@ class LocalRepository : Repository {
 					}
 				}
 				',' -> {
-					if (inQuotes) sb.append(ch) else { result += sb.toString(); sb.clear() }
+					if (inQuotes) {
+						sb.append(ch)
+					} else {
+						result += sb.toString().trim()
+						sb.clear()
+					}
 				}
 				else -> sb.append(ch)
 			}
 			i++
 		}
-		result += sb.toString()
+		// 添加最后一个字段
+		result += sb.toString().trim()
 		return result
 	}
 
@@ -229,7 +288,15 @@ class LocalRepository : Repository {
 
 	override suspend fun fortune(id: Int): Result<DrawResponse> = runCatching {
 		tryLoadFromAssetsOnce()
-		fortunes.first { it.id == id }
+		WtsLogger.i("Looking for fortune id=$id, total fortunes=${fortunes.size}")
+		val fortune = fortunes.firstOrNull { it.id == id }
+		if (fortune == null) {
+			WtsLogger.e("Fortune id=$id not found!")
+			WtsLogger.e("Available fortune IDs: ${fortunes.map { it.id }}")
+		} else {
+			WtsLogger.i("Found fortune: ${fortune.title}")
+		}
+		fortune ?: fortunes.first { it.id == 1 } // fallback to first fortune
 	}
 
 	override suspend fun cupResult(): Result<CupResultResponse> = runCatching {

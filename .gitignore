@@ -1,7 +1,62 @@
-﻿# Local dev artifacts
-.gradle/
-.idea/
+﻿# Android Studio 和 Gradle 文件
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# 簽名文件（保留在版本控制中但要小心）
+# wts-release-key.keystore
+
+# 建置輸出
+*/build/
+**/build/
+
+# APK 文件
+*.apk
+*.aab
+
+# ProGuard
+/app/proguard/
+
+# 日誌文件
+*.log
+
+# 臨時文件
+*.tmp
+*.temp
+*~
+
+# 備份文件
+backup_*
+*_backup.*
+
+# 報告文件
+build_report_*.txt
+apk_comparison_*.txt
+
+# IDE 特定文件
 .vscode/
-build/
-app/build/
-MyFirstApp/
+.idea/
+*.swp
+*.swo
+
+# OS 特定文件
+Thumbs.db
+.DS_Store
+
+# 確保重要資源文件被追蹤
+!app/src/main/res/**
+!app/src/main/assets/**
+!app/src/debug/AndroidManifest.xml
+!app/src/release/AndroidManifest.xml

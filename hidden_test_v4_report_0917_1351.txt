@@ -1,0 +1,15 @@
+﻿Hidden Test Version 4 Build Report
+Generated: 09/17/2025 13:51:44
+
+BUILD SUMMARY:
+- Version: 1.0.4-beta (Build 4)
+- Build Duration: 2.1 minutes
+- Debug APK: 36.9 MB
+- Release APK: 11.9 MB
+- Compression: 67.8%
+
+PACKAGE LOCATION:
+D:\Users\Adam\Desktop\Myproject\Androidproject\WTSaskingforsignature\hidden_test_v4_0917_1351
+
+STATUS: READY FOR HIDDEN TESTING
+All builds completed successfully. Package ready for upload validation.

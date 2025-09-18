@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">WTS 점괘</string>
+    
+    <!-- Main Screen -->
+    <string name="main_title">황대선 점괘</string>
+    <string name="direct_draw">직접 점괘</string>
+    <string name="cup_draw">컵 점괘</string>
+    <string name="daily_fortune">오늘의 점괘</string>
+    <string name="browse_fortunes">Deep Seek 해석</string>
+    <string name="test_api">API 테스트</string>
+    
+    <!-- Fortune Categories -->
+    <string name="career">직업</string>
+    <string name="wealth">재운</string>
+    <string name="health">건강</string>
+    <string name="love">연애</string>
+    <string name="family">가족</string>
+    <string name="travel">여행</string>
+    <string name="reputation">명예</string>
+    <string name="friendship">우정</string>
+    <string name="other">기타</string>
+    
+    <!-- Fortune Steps -->
+    <string name="step_1">1. 두 손을 모아「황대선, 모든 소원을 들어주소서」를 3번 마음속으로 외치세요</string>
+    <string name="step_2">2. 자신의 이름, 출생지와 시간, 나이, 바라는 일을 마음속으로 외치세요</string>
+    <string name="step_3">3. 아래 버튼을 클릭하여 점괘를 뽑으세요</string>
+    
+    <!-- Fortune Results -->
+    <string name="fortune_result">당신이 뽑은 것은</string>
+    <string name="fortune_number">제%d괘</string>
+    <string name="fortune_title">%s</string>
+    <string name="fortune_summary">%s</string>
+    <string name="fortune_content">%s</string>
+    
+    <!-- Cup Throwing -->
+    <string name="cup_instructions">컵을 3번 던져주세요. 각 번 던진 후, 컵이 멈출 때까지 기다린 다음 던지기 버튼을 누르세요. 3번 완료해주세요.</string>
+    <string name="cup_result">컵 결과</string>
+    <string name="cup_valid">유효</string>
+    <string name="cup_invalid">무효</string>
+    
+    <!-- AI Interpretation -->
+    <string name="ai_interpretation">AI 지능 해석</string>
+    <string name="ask_question">질문을 입력하세요 (200자 이내)</string>
+    <string name="send">보내기</string>
+    <string name="sending">전송 중...</string>
+    
+    <!-- Navigation -->
+    <string name="back">뒤로</string>
+    <string name="home">홈</string>
+    <string name="next">다음</string>
+    <string name="previous">이전</string>
+    
+    <!-- Common -->
+    <string name="loading">로딩 중...</string>
+    <string name="error">오류</string>
+    <string name="success">성공</string>
+    <string name="cancel">취소</string>
+    <string name="confirm">확인</string>
+    <string name="ok">확인</string>
+    
+    <!-- Fortune Levels -->
+    <string name="excellent">대길</string>
+    <string name="good">중길</string>
+    <string name="average">소길</string>
+    <string name="poor">흉</string>
+    
+    <!-- AI Advice Categories -->
+    <string name="key_summary">요점</string>
+    <string name="fortune_interpretation">운세 해석</string>
+    <string name="action_advice">행동 조언</string>
+    <string name="precautions">주의사항</string>
+    <string name="one_sentence_advice">한마디 조언</string>
+    <string name="comprehensive_analysis">종합 분석</string>
+    
+    <!-- Settings -->
+    <string name="settings">설정</string>
+    <string name="language">언어</string>
+    <string name="theme">테마</string>
+    <string name="notifications">알림</string>
+    
+    <!-- About -->
+    <string name="about">정보</string>
+    <string name="version">버전</string>
+    <string name="privacy_policy">개인정보처리방침</string>
+    <string name="terms_of_service">이용약관</string>
+    
+    <!-- Messages -->
+    <string name="no_internet">인터넷 연결 불필요</string>
+    <string name="offline_available">모든 기능을 오프라인에서 사용 가능</string>
+    <string name="local_ai">로컬 AI 탑재</string>
+    <string name="fortune_disclaimer">이 해석은 참고용이며, 구체적인 행동은 본인의 판단으로 결정하세요.</string>
+</resources>

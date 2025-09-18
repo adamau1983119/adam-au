@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,6 +18,7 @@ import com.example.wtsaskingforsignature.ui.screens.*
 import com.example.wtsaskingforsignature.ui.chatnew.ChatScreenNew
 import com.example.wtsaskingforsignature.ui.theme.WtsTheme
 import com.example.wtsaskingforsignature.util.WtsLogger
+import com.example.wtsaskingforsignature.ui.components.WtsBackground
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +27,10 @@ class MainActivity : ComponentActivity() {
 		setContent {
 			WtsTheme {
 				Surface {
-					WtsNavHost(startDestinationOverride = navigateTarget)
+					Box(Modifier.fillMaxSize()) {
+						WtsBackground(modifier = Modifier.matchParentSize())
+						WtsNavHost(modifier = Modifier.fillMaxSize(), startDestinationOverride = navigateTarget)
+					}
 				}
 			}
 		}
@@ -44,6 +50,8 @@ object Routes {
 	const val CONTENT = "content/{id}"
 	const val CHAT = "chat/{id}"
 	const val CHAT_NEW = "chat_new/{id}"
+	const val SETTINGS = "settings"
+	const val LANGUAGE_SETTINGS = "language_settings"
 
 	fun content(id: Int) = "content/$id"
 	fun result(valid: Boolean) = "result/$valid"
@@ -65,7 +73,7 @@ fun WtsNavHost(
 		Routes.BROWSE -> Routes.BROWSE
 		Routes.STEPS -> Routes.STEPS
 		Routes.PREVIEW -> Routes.PREVIEW
-		else -> Routes.HOME
+		else -> Routes.HOME  // 恢復原來的首頁
 	}
 	NavHost(navController = navController, startDestination = start, modifier = modifier) {
 		composable(Routes.HOME) { HomeScreen(navController) }
@@ -84,9 +92,9 @@ fun WtsNavHost(
 		}
 		composable(
 			Routes.RESULT,
-			arguments = listOf(navArgument("valid") { type = NavType.BoolType })
+			arguments = listOf(navArgument("id") { type = NavType.BoolType })
 		) { backStackEntry ->
-			val valid = backStackEntry.arguments?.getBoolean("valid") ?: false
+			val valid = backStackEntry.arguments?.getBoolean("id") ?: false
 			CupResultScreen(navController, valid)
 		}
 		composable(
@@ -112,5 +120,9 @@ fun WtsNavHost(
 			val id = backStackEntry.arguments?.getInt("id") ?: 1
 			ChatScreenNew(navController, id)
 		}
+		
+		// 設置相關路由
+		composable(Routes.SETTINGS) { SettingsScreen(navController) }
+		composable(Routes.LANGUAGE_SETTINGS) { LanguageSettingsScreen(navController) }
 	}
 }

@@ -1,0 +1,204 @@
+﻿PowerShell Encoding Issue Analysis Report
+Generated: 09/17/2025 13:35:25
+
+ENVIRONMENT:
+- PowerShell Version: 5.1.19041.6328
+- Edition: Desktop  
+- Console Encoding: 繁體中文 (Big5)
+- PowerShell Encoding: US-ASCII
+
+FILES WITH CHINESE CHARACTERS (40):
+- admob_check.ps1
+- ai_safety_comparison.ps1
+- backup_project.ps1
+- build_release.ps1
+- check_images.ps1
+- compare_builds.ps1
+- cup_and_userdata_check.ps1
+- deep_analysis_inconsistency.ps1
+- emergency_verification.ps1
+- execute_vulnerability_tests.ps1
+- file_change_tracker.ps1
+- final_10_points_check.ps1
+- final_features_check.ps1
+- fix_fortunes.ps1
+- generate_master_password.ps1
+- hong_kong_security_check.ps1
+- legal_compliance_check.ps1
+- make_static_gif.ps1
+- make_wts01_gif.ps1
+- pre_commit_check.ps1
+- privacy_check.ps1
+- quick_verification.ps1
+- sensitive_topics_check.ps1
+- suicide_prevention_check.ps1
+- test_abortion_question.ps1
+- test_animal_welfare_protection.ps1
+- test_child_protection_system.ps1
+- test_complete_security_system.ps1
+- test_copyright_protection.ps1
+- test_copyright_simple.ps1
+- test_hong_kong_mild_response.ps1
+- test_lawsuit_question.ps1
+- test_lgbt_love_support.ps1
+- test_multilanguage.ps1
+- test_pet_question.ps1
+- test_quantum_security_system.ps1
+- test_user_experience_balance.ps1
+- verify_build_consistency.ps1
+- verify_fortunes.ps1
+- vulnerability_test_questions.ps1
+
+
+ENCODING ISSUES (35):
+- Console: Console encoding (繁體中文 (Big5)) may not display Chinese correctly
+- ai_safety_comparison.ps1: Encoding mismatch between UTF8 and default
+- backup_project.ps1: Encoding mismatch between UTF8 and default
+- build_release.ps1: Encoding mismatch between UTF8 and default
+- check_images.ps1: Encoding mismatch between UTF8 and default
+- compare_builds.ps1: Encoding mismatch between UTF8 and default
+- emergency_verification.ps1: Encoding mismatch between UTF8 and default
+- execute_vulnerability_tests.ps1: Encoding mismatch between UTF8 and default
+- file_change_tracker.ps1: Encoding mismatch between UTF8 and default
+- final_10_points_check.ps1: Encoding mismatch between UTF8 and default
+- fix_fortunes.ps1: Encoding mismatch between UTF8 and default
+- generate_master_password.ps1: Encoding mismatch between UTF8 and default
+- hong_kong_security_check.ps1: Encoding mismatch between UTF8 and default
+- legal_compliance_check.ps1: Encoding mismatch between UTF8 and default
+- pre_commit_check.ps1: Encoding mismatch between UTF8 and default
+- privacy_check.ps1: Encoding mismatch between UTF8 and default
+- quick_verification.ps1: Encoding mismatch between UTF8 and default
+- sensitive_topics_check.ps1: Encoding mismatch between UTF8 and default
+- suicide_prevention_check.ps1: Encoding mismatch between UTF8 and default
+- test_abortion_question.ps1: Encoding mismatch between UTF8 and default
+- test_animal_welfare_protection.ps1: Encoding mismatch between UTF8 and default
+- test_child_protection_system.ps1: Encoding mismatch between UTF8 and default
+- test_complete_security_system.ps1: Encoding mismatch between UTF8 and default
+- test_copyright_protection.ps1: Encoding mismatch between UTF8 and default
+- test_copyright_simple.ps1: Encoding mismatch between UTF8 and default
+- test_hong_kong_mild_response.ps1: Encoding mismatch between UTF8 and default
+- test_lawsuit_question.ps1: Encoding mismatch between UTF8 and default
+- test_lgbt_love_support.ps1: Encoding mismatch between UTF8 and default
+- test_multilanguage.ps1: Encoding mismatch between UTF8 and default
+- test_pet_question.ps1: Encoding mismatch between UTF8 and default
+- test_user_experience_balance.ps1: Encoding mismatch between UTF8 and default
+- verify_build_consistency.ps1: Encoding mismatch between UTF8 and default
+- verify_fortunes.ps1: Encoding mismatch between UTF8 and default
+- vulnerability_test_questions.ps1: Encoding mismatch between UTF8 and default
+- PowerShell: Windows PowerShell Desktop edition has Unicode limitations
+
+
+PROBLEMATIC PATTERNS (100):
+- admob_check.ps1: Chinese in variable names
+- admob_check.ps1: Chinese in if conditions
+- ai_safety_comparison.ps1: Chinese in Write-Host
+- ai_safety_comparison.ps1: Chinese in variable names
+- ai_safety_comparison.ps1: Chinese in if conditions
+- backup_project.ps1: Chinese in Write-Host
+- backup_project.ps1: Chinese in variable names
+- build_release.ps1: Chinese in Write-Host
+- check_images.ps1: Chinese in Write-Host
+- check_images.ps1: Chinese in variable names
+- check_images.ps1: Chinese in if conditions
+- compare_builds.ps1: Chinese in Write-Host
+- compare_builds.ps1: Chinese in variable names
+- compare_builds.ps1: Chinese in if conditions
+- cup_and_userdata_check.ps1: Chinese in variable names
+- cup_and_userdata_check.ps1: Chinese in if conditions
+- deep_analysis_inconsistency.ps1: Chinese in Write-Host
+- deep_analysis_inconsistency.ps1: Chinese in variable names
+- deep_analysis_inconsistency.ps1: Chinese in foreach loops
+- deep_analysis_inconsistency.ps1: Chinese in if conditions
+- emergency_verification.ps1: Chinese in Write-Host
+- emergency_verification.ps1: Chinese in variable names
+- emergency_verification.ps1: Chinese in if conditions
+- execute_vulnerability_tests.ps1: Chinese in Write-Host
+- execute_vulnerability_tests.ps1: Chinese in variable names
+- execute_vulnerability_tests.ps1: Chinese in if conditions
+- file_change_tracker.ps1: Chinese in Write-Host
+- file_change_tracker.ps1: Chinese in variable names
+- file_change_tracker.ps1: Chinese in if conditions
+- final_10_points_check.ps1: Chinese in Write-Host
+- final_10_points_check.ps1: Chinese in variable names
+- final_10_points_check.ps1: Chinese in if conditions
+- final_features_check.ps1: Chinese in Write-Host
+- final_features_check.ps1: Chinese in variable names
+- fix_fortunes.ps1: Chinese in Write-Host
+- fix_fortunes.ps1: Chinese in variable names
+- generate_master_password.ps1: Chinese in Write-Host
+- generate_master_password.ps1: Chinese in variable names
+- generate_master_password.ps1: Chinese in if conditions
+- hong_kong_security_check.ps1: Chinese in Write-Host
+- hong_kong_security_check.ps1: Chinese in variable names
+- hong_kong_security_check.ps1: Chinese in if conditions
+- legal_compliance_check.ps1: Chinese in Write-Host
+- legal_compliance_check.ps1: Chinese in variable names
+- make_static_gif.ps1: Chinese in variable names
+- make_static_gif.ps1: Chinese in if conditions
+- make_wts01_gif.ps1: Chinese in variable names
+- make_wts01_gif.ps1: Chinese in if conditions
+- pre_commit_check.ps1: Chinese in Write-Host
+- pre_commit_check.ps1: Chinese in variable names
+- privacy_check.ps1: Chinese in Write-Host
+- privacy_check.ps1: Chinese in variable names
+- privacy_check.ps1: Chinese in if conditions
+- quick_verification.ps1: Chinese in Write-Host
+- quick_verification.ps1: Chinese in variable names
+- quick_verification.ps1: Chinese in if conditions
+- sensitive_topics_check.ps1: Chinese in Write-Host
+- sensitive_topics_check.ps1: Chinese in variable names
+- sensitive_topics_check.ps1: Chinese in if conditions
+- suicide_prevention_check.ps1: Chinese in Write-Host
+- suicide_prevention_check.ps1: Chinese in variable names
+- suicide_prevention_check.ps1: Chinese in if conditions
+- test_abortion_question.ps1: Chinese in Write-Host
+- test_abortion_question.ps1: Chinese in variable names
+- test_abortion_question.ps1: Chinese in if conditions
+- test_animal_welfare_protection.ps1: Chinese in Write-Host
+- test_animal_welfare_protection.ps1: Chinese in variable names
+- test_animal_welfare_protection.ps1: Chinese in if conditions
+- test_child_protection_system.ps1: Chinese in Write-Host
+- test_child_protection_system.ps1: Chinese in variable names
+- test_child_protection_system.ps1: Chinese in if conditions
+- test_complete_security_system.ps1: Chinese in Write-Host
+- test_complete_security_system.ps1: Chinese in variable names
+- test_copyright_protection.ps1: Chinese in Write-Host
+- test_copyright_protection.ps1: Chinese in variable names
+- test_copyright_protection.ps1: Chinese in if conditions
+- test_hong_kong_mild_response.ps1: Chinese in Write-Host
+- test_lawsuit_question.ps1: Chinese in Write-Host
+- test_lawsuit_question.ps1: Chinese in variable names
+- test_lawsuit_question.ps1: Chinese in if conditions
+- test_lgbt_love_support.ps1: Chinese in Write-Host
+- test_lgbt_love_support.ps1: Chinese in variable names
+- test_multilanguage.ps1: Chinese in Write-Host
+- test_multilanguage.ps1: Chinese in variable names
+- test_pet_question.ps1: Chinese in Write-Host
+- test_pet_question.ps1: Chinese in variable names
+- test_pet_question.ps1: Chinese in if conditions
+- test_quantum_security_system.ps1: Chinese in Write-Host
+- test_quantum_security_system.ps1: Chinese in variable names
+- test_quantum_security_system.ps1: Chinese in if conditions
+- test_user_experience_balance.ps1: Chinese in Write-Host
+- test_user_experience_balance.ps1: Chinese in variable names
+- verify_build_consistency.ps1: Chinese in Write-Host
+- verify_build_consistency.ps1: Chinese in variable names
+- verify_build_consistency.ps1: Chinese in if conditions
+- verify_fortunes.ps1: Chinese in Write-Host
+- verify_fortunes.ps1: Chinese in variable names
+- vulnerability_test_questions.ps1: Chinese in Write-Host
+- vulnerability_test_questions.ps1: Chinese in variable names
+- vulnerability_test_questions.ps1: Chinese in if conditions
+
+
+ROOT CAUSE:
+PowerShell scripts with Chinese characters cause parsing errors in Windows PowerShell due to:
+1. Console encoding limitations
+2. File encoding mismatches  
+3. Unicode handling differences between PowerShell editions
+
+SOLUTION:
+Replace all Chinese text in PowerShell scripts with English equivalents.
+Use the generated english_only_template.ps1 as a starting point.
+
+STATUS: NEEDS ACTION

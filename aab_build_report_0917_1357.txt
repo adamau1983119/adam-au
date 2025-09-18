@@ -1,0 +1,19 @@
+﻿AAB Bundle Generation Report
+Generated: 09/17/2025 13:57:42
+
+BUILD SUMMARY:
+- Version: 1.0.4-beta (Build 4)
+- Build Duration: 0.6 minutes
+- Debug AAB: 33 MB
+- Release AAB: 24.8 MB
+- Format: Android App Bundle (.aab)
+
+PACKAGE LOCATIONS:
+Desktop: D:\Users\Adam\Desktop\DS_Fortune_AAB_Upload
+Project: D:\Users\Adam\Desktop\Myproject\Androidproject\WTSaskingforsignature\aab_upload_package_0917_1357
+
+UPLOAD FILE:
+DS_Fortune_v4_Release.aab - Ready for Google Play Console
+
+STATUS: READY FOR UPLOAD
+AAB bundle generated successfully and ready for Google Play Console upload.

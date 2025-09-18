@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">DS Wong Tai Sin Fortune Sticks</string>
+    
+    <!-- Main Title -->
+    <string name="main_title">Wong Tai Sin Fortune Sticks</string>
+    
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="language_settings">Language Settings</string>
+    <string name="current_language">Current Language</string>
+    <string name="current_language_info">Current Language Information</string>
+    <string name="language_code">Language Code</string>
+    <string name="language_name">Language Name</string>
+    <string name="system_language">System Language</string>
+    
+    <!-- About App -->
+    <string name="about_app">About App</string>
+    <string name="about_app_subtitle">Version information, privacy policy, etc.</string>
+    
+    <!-- Help & Support -->
+    <string name="help_support">Help &amp; Support</string>
+    <string name="help_support_subtitle">Usage instructions, frequently asked questions</string>
+    
+    <!-- Data Management -->
+    <string name="data_management">Data Management</string>
+    <string name="data_management_subtitle">Manage app data and settings</string>
+    
+    <!-- Common Buttons -->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="btn_return">Return</string>
+    
+    <!-- Image Placeholder -->
+    <string name="image_placeholder">Please place the image file in res/drawable/ and name it wong_tai_sin.png</string>
+    
+    <!-- Language Selector -->
+    <string name="language_colon">Language</string>
+    
+    <!-- Main Interface Button Text -->
+    <string name="direct_fortune_draw_button">Direct Fortune Draw</string>
+    <string name="cup_fortune_draw_button">Cup Fortune Draw</string>
+    <string name="daily_fortune_draw_button">Daily Fortune</string>
+    <string name="deep_seek_interpretation_button">Deep Seek Interpretation</string>
+    
+    <!-- Fortune Categories -->
+    <string name="career">Career</string>
+    <string name="wealth">Wealth</string>
+    <string name="love">Love</string>
+    <string name="health">Health</string>
+    <string name="study">Study</string>
+    <string name="travel">Travel</string>
+    <string name="family">Family</string>
+    <string name="friendship">Friendship</string>
+    <string name="reputation">Reputation</string>
+    <string name="other">Other</string>
+    
+    <!-- Fortune Steps -->
+    <string name="select_divination_category">Select Divination Category</string>
+    <string name="fortune_drawing_steps">Fortune Drawing Steps</string>
+    <string name="drawn_stick_preview">Drawn Stick Preview</string>
+    
+    <!-- Main Interface Buttons -->
+    <string name="daily_fortune_draw">Daily Fortune</string>
+    <string name="deep_seek_interpretation">Deep Seek Interpretation</string>
+    <string name="direct_fortune_draw">Direct Fortune Draw</string>
+    
+    <!-- Tips and Instructions -->
+    <string name="tip_complete_three_cups">Tip: Complete three cup throws to confirm fortune meaning</string>
+    
+    <!-- Fortune Process -->
+    <string name="start_fortune_drawing">Start Fortune Drawing</string>
+    <string name="fortune_drawing_animation">Fortune Drawing Animation</string>
+    <string name="cup_verification_required">Cup Verification (3 times required)</string>
+    
+    <!-- Fortune Steps Detailed Content -->
+    <string name="step_1_hands_clasped">Clasp your hands together and silently recite "Wong Tai Sin grants all wishes" 3 times</string>
+    <string name="step_2_recite_info">Silently recite your name, birthplace and time, age and what you seek</string>
+    <string name="step_3_click_button">Click the button below to start fortune drawing</string>
+    
+    <!-- Navigation Buttons -->
+    <string name="previous_step">Previous Step</string>
+    <string name="return_button">Return</string>
+    <string name="return_home">Return Home</string>
+    <string name="next_step">Next Step</string>
+    <string name="select_category_prompt">Please select what you seek:</string>
+    <string name="today_already_drawn">Already Drawn Today</string>
+    <string name="draw_today_fortune">Draw Today\'s Fortune</string>
+    
+    <!-- Cup Verification Related -->
+    <string name="cup_throwing">Cup Throwing</string>
+    <string name="cup_throwing_animation">Cup Throwing Animation</string>
+    <string name="direct_view_fortune">Direct View Fortune</string>
+    <string name="direct_view_fortune_alt">Direct View Fortune</string>
+    <string name="return_to_draw">Return to Draw</string>
+    <string name="return_to_home">Return Home</string>
+    <string name="regenerate_cup">Regenerate Cup</string>
+    <string name="loading_text">Loading...</string>
+    <string name="fortune_header_format">Fortune %s: %s</string>
+    <string name="fortune_header_simple">Fortune %s</string>
+    
+    <!-- Fortune Display Related -->
+    <string name="fortune_poem_title">Fortune Poem</string>
+    <string name="fortune_poem">Fortune Poem</string>
+    <string name="fortune_interpretation_title">Interpretation</string>
+    <string name="fortune_interpretation">Interpretation</string>
+    <string name="fortune_analysis_title">Fortune Analysis</string>
+    <string name="fortune_analysis">Fortune Analysis</string>
+    <string name="fortune_not_found">Fortune Not Found</string>
+    <string name="fortune_not_found_description">Unable to find content for Fortune %d, please check fortune data.</string>
+    <string name="fortune_metadata">Fortune Information</string>
+    <string name="fortune_id">Fortune ID</string>
+    <string name="current_language_label">Current Language</string>
+    <string name="loading_fortune">Loading Fortune...</string>
+    <string name="marriage_fortune">Marriage Fortune</string>
+    <string name="career_fortune">Career Fortune</string>
+    <string name="wealth_fortune">Wealth Fortune</string>
+    <string name="health_fortune">Health Fortune</string>
+    <string name="family_fortune">Family Fortune</string>
+    <string name="love_fortune">Love Fortune</string>
+    <string name="travel_fortune">Travel Fortune</string>
+    <string name="reputation_fortune">Reputation Fortune</string>
+    <string name="friendship_fortune">Friendship Fortune</string>
+    <string name="studies_fortune">Studies Fortune</string>
+    <string name="year_fortune">Year Fortune</string>
+    <string name="switching_language">Switching Language...</string>
+    
+    <!-- Fortune Analysis Items -->
+    <string name="fortune_analysis_marriage">Marriage</string>
+    <string name="fortune_analysis_career">Career</string>
+    <string name="fortune_analysis_wealth">Wealth</string>
+    <string name="fortune_analysis_health">Health</string>
+    <string name="fortune_analysis_family">Family</string>
+    <string name="fortune_analysis_love">Love</string>
+    <string name="fortune_analysis_travel">Travel</string>
+    <string name="fortune_analysis_reputation">Reputation</string>
+    <string name="fortune_analysis_friendship">Friendship</string>
+    <string name="fortune_analysis_studies">Studies</string>
+    <string name="fortune_analysis_year_fortune">Year Fortune</string>
+    <string name="fortune_analysis_dispute">Dispute</string>
+    <string name="fortune_analysis_crypto">Investment</string>
+    <string name="fortune_analysis_origin">Origin</string>
+    <string name="fortune_analysis_delegation">Delegation</string>
+    
+    <!-- Language Selection -->
+    <string name="select_language">Select Language</string>
+    
+    <!-- Privacy Policy -->
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_title">Privacy Policy</string>
+    <string name="privacy_description">We value your privacy protection. This app does not collect personal identity information.</string>
+    <string name="privacy_compliance">Privacy Compliance</string>
+    <string name="privacy_compliance_desc">This app strictly complies with relevant privacy protection regulations.</string>
+    <string name="privacy_contact">Contact Us</string>
+    <string name="privacy_contact_desc">For privacy concerns, please contact us through app store reviews.</string>
+    
+    <!-- Network Status -->
+    <string name="no_internet">No Internet Required</string>
+    <string name="offline_available">All features available offline</string>
+    <string name="local_ai">Local AI Powered</string>
+    <string name="fortune_disclaimer">This interpretation is for reference only. Please make specific decisions based on your own judgment.</string>
+    
+    <!-- Cup Result -->
+    <string name="cup_result">Cup Result</string>
+</resources>

@@ -1,0 +1,89 @@
+﻿DS Fortune App - Hidden Test Version 4
+Internal Testing Build Documentation
+Generated: 09/17/2025 13:51:44
+
+=== BUILD INFORMATION ===
+Version: 1.0.4-beta (Build 4)
+Build Duration: 2.1 minutes
+Package ID: com.wts.dsfortune
+
+=== APK FILES ===
+1. DS_Fortune_v4_Debug_Test.apk
+   - Size: 36.9 MB
+   - Type: Debug build with full logging
+   - Purpose: Internal testing and debugging
+   - ProGuard: Disabled
+   - Signed: Yes
+
+2. DS_Fortune_v4_Release_Test.apk  
+   - Size: 11.9 MB
+   - Type: Release build optimized
+   - Purpose: Upload testing validation
+   - ProGuard: Enabled with resource protection
+   - Signed: Yes
+   - Compression: 67.8% smaller than debug
+
+=== HIDDEN TEST FOCUS AREAS ===
+??Dynamic resource loading (wong_tai_sin, wts03-05)
+??ProGuard obfuscation compatibility
+??AdMob advertisement system
+??DeepSeek API integration
+??Cup throwing animations
+??User profile data handling
+??Multi-language support
+??Fortune content integrity (5000+ entries)
+
+=== TEST SCENARIOS ===
+1. Image Loading Test
+   - Verify wong_tai_sin displays correctly
+   - Check all cup throwing images (wts03, wts04, wts05)
+   - Confirm no resource loading failures
+
+2. Feature Functionality Test
+   - Random fortune drawing
+   - Cup throwing with animations
+   - User profile input and storage
+   - Language switching
+   - AdMob ad loading and display
+
+3. Build Consistency Test
+   - Compare debug vs release behavior
+   - Verify identical functionality
+   - Check performance differences
+   - Validate ProGuard protection effectiveness
+
+=== KNOWN ISSUES RESOLVED ===
+??Dynamic resource loading failures (Fixed with ProGuard rules)
+??Build consistency between debug/release (Fixed)
+??PowerShell encoding issues (Fixed with English scripts)
+??AdMob integration incomplete (Fixed)
+??DeepSeek API setup (Completed)
+
+=== UPLOAD VALIDATION CHECKLIST ===
+??Install both APKs on test devices
+??Verify all images load correctly in release build
+??Test fortune drawing functionality
+??Confirm cup throwing works properly
+??Check AdMob ads display (test IDs)
+??Validate user profile features
+??Test language switching
+??Compare debug vs release behavior
+??Monitor for any crashes or errors
+
+=== INTERNAL NOTES ===
+- This is hidden test version 4 for upload validation
+- All previous build consistency issues have been resolved
+- ProGuard rules now protect dynamic resource loading
+- Both debug and release builds should behave identically
+- Ready for Google Play Console upload testing
+
+=== NEXT STEPS ===
+1. Install and test both APKs on multiple devices
+2. Validate all functionality works in release build
+3. If tests pass, proceed with Google Play Console upload
+4. Monitor for any issues during upload process
+5. Prepare for gradual rollout if upload successful
+
+Build completed successfully at 09/17/2025 13:51:44
+Package location: D:\Users\Adam\Desktop\Myproject\Androidproject\WTSaskingforsignature\hidden_test_v4_0917_1351
+Status: Ready for hidden testing

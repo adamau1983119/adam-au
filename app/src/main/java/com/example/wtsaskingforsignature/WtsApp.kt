@@ -2,17 +2,21 @@ package com.example.wtsaskingforsignature
 
 import android.app.Application
 import com.example.wtsaskingforsignature.data.ServiceLocator
+import com.example.wtsaskingforsignature.util.WtsLogger
 
 class WtsApp : Application() {
-	override fun onCreate() {
-		super.onCreate()
-		instance = this
-		// 強制使用本地離線資料（讀取 assets/fortunes.json）
-		ServiceLocator.useRemote = false
-	}
-
 	companion object {
 		lateinit var instance: WtsApp
 			private set
+	}
+
+	override fun onCreate() {
+		super.onCreate()
+		instance = this
+		
+		// 使用本地資料庫作為主要數據源
+		ServiceLocator.dataSource = 1
+		
+		WtsLogger.i("WtsApp initialized, using local database")
 	}
 }

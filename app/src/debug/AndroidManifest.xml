@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Debug 版本專用配置 -->
+    <application
+        android:debuggable="true"
+        android:label="DS 黃大仙靈簽 (Debug)"
+        tools:replace="android:label">
+        
+        <!-- Debug 版本使用測試 AdMob Application ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+            
+        <!-- Debug 版本啟用網絡安全配置 -->
+        <meta-data
+            android:name="android.net.usesCleartextTraffic"
+            android:value="true" />
+    </application>
+</manifest>

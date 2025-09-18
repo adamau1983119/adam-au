@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">WTS靈簽</string>
+    
+    <!-- Main Screen -->
+    <string name="main_title">黃大仙靈簽</string>
+    <string name="direct_draw">直接求籤</string>
+    <string name="cup_draw">摘杯抽籤</string>
+    <string name="daily_fortune">每日一籤</string>
+    <string name="browse_fortunes">Deep Seek解籤</string>
+    <string name="test_api">測試API</string>
+    
+    <!-- Fortune Categories -->
+    <string name="career">事業</string>
+    <string name="wealth">財運</string>
+    <string name="health">健康</string>
+    <string name="love">感情</string>
+    <string name="family">家庭</string>
+    <string name="travel">遷徙</string>
+    <string name="reputation">名譽</string>
+    <string name="friendship">友誼</string>
+    <string name="other">其他</string>
+    
+    <!-- Fortune Steps -->
+    <string name="step_1">1. 雙手合十，默念「黃大仙有求必應」3次</string>
+    <string name="step_2">2. 默念自己姓名，出生地點及時間，年齡及所求之事</string>
+    <string name="step_3">3. 點擊下方按鈕開始抽籤</string>
+    
+    <!-- Fortune Results -->
+    <string name="fortune_result">你已抽中</string>
+    <string name="fortune_number">第%d籤</string>
+    <string name="fortune_title">%s</string>
+    <string name="fortune_summary">%s</string>
+    <string name="fortune_content">%s</string>
+    
+    <!-- Cup Throwing -->
+    <string name="cup_instructions">請擲杯三次，每次擲杯後，請等待杯靜止，再按下擲杯按鈕，完成三次擲杯。</string>
+    <string name="cup_result">擲杯結果</string>
+    <string name="cup_valid">有效</string>
+    <string name="cup_invalid">無效</string>
+    
+    <!-- AI Interpretation -->
+    <string name="ai_interpretation">AI智能解籤</string>
+    <string name="ask_question">輸入問題（200字內）</string>
+    <string name="send">發送</string>
+    <string name="sending">傳送中...</string>
+    
+    <!-- Navigation -->
+    <string name="back">返回</string>
+    <string name="home">首頁</string>
+    <string name="next">下一步</string>
+    <string name="previous">上一步</string>
+    
+    <!-- Common -->
+    <string name="loading">載入中...</string>
+    <string name="error">錯誤</string>
+    <string name="success">成功</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">確認</string>
+    <string name="ok">確定</string>
+    
+    <!-- Fortune Levels -->
+    <string name="excellent">上上籤</string>
+    <string name="good">上籤</string>
+    <string name="average">中籤</string>
+    <string name="poor">下籤</string>
+    
+    <!-- AI Advice Categories -->
+    <string name="key_summary">重點摘要</string>
+    <string name="fortune_interpretation">吉凶解讀</string>
+    <string name="action_advice">行動建議</string>
+    <string name="precautions">注意事項</string>
+    <string name="one_sentence_advice">一句忠告</string>
+    <string name="comprehensive_analysis">紫微斗數綜合</string>
+    
+    <!-- Settings -->
+    <string name="settings">設定</string>
+    <string name="language">語言</string>
+    <string name="theme">主題</string>
+    <string name="notifications">通知</string>
+    
+    <!-- About -->
+    <string name="about">關於</string>
+    <string name="version">版本</string>
+    <string name="privacy_policy">隱私政策</string>
+    <string name="terms_of_service">服務條款</string>
+    
+    <!-- Messages -->
+    <string name="no_internet">無需網路連接</string>
+    <string name="offline_available">所有功能離線可用</string>
+    <string name="local_ai">本地AI驅動</string>
+    <string name="fortune_disclaimer">此解籤僅供參考，具體行動請結合實際情況。</string>
+</resources>

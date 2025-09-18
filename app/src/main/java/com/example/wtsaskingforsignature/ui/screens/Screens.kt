@@ -45,6 +45,9 @@ import kotlinx.coroutines.withContext
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.wtsaskingforsignature.util.WtsLogger
+// import com.example.wtsaskingforsignature.util.ApiTester
+import com.example.wtsaskingforsignature.util.LanguageManager
+import com.example.wtsaskingforsignature.util.LanguageManager.Language
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -56,6 +59,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import com.example.wtsaskingforsignature.R
+import com.example.wtsaskingforsignature.ui.theme.MdGradientBottom
+import com.example.wtsaskingforsignature.ui.theme.MdGradientTop
+import com.example.wtsaskingforsignature.ui.components.WtsPrimaryButton
+import com.example.wtsaskingforsignature.ui.components.WtsOutlinedButton
+import com.example.wtsaskingforsignature.ui.components.WtsWhiteButton
+import com.example.wtsaskingforsignature.ui.components.WtsFrostedChoiceButton
 import android.os.Build
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
@@ -63,6 +72,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
  
 
 @Composable
@@ -72,18 +87,12 @@ private fun CategorySelector(selected: String?, onSelect: (String) -> Unit) {
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
 			row.forEach { c ->
 				val isSelected = selected == c
-				if (isSelected) {
-					Button(
-						onClick = { onSelect(c) },
-						modifier = Modifier.weight(1f),
-						colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-							containerColor = MaterialTheme.colorScheme.primary,
-							contentColor = MaterialTheme.colorScheme.onPrimary
-						)
-					) { Text(c) }
-				} else {
-					OutlinedButton(onClick = { onSelect(c) }, modifier = Modifier.weight(1f)) { Text(c) }
-				}
+				com.example.wtsaskingforsignature.ui.components.WtsFrostedChoiceButton(
+					text = c,
+					selected = isSelected,
+					onClick = { onSelect(c) },
+					modifier = Modifier.weight(1f)
+				)
 			}
 		}
 		Spacer(Modifier.height(8.dp))
@@ -180,9 +189,6 @@ fun HomeScreen(nav: NavHostController) {
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
-			.background(
-				Brush.verticalGradient(listOf(Color(0xFFF7ECEB), Color(0xFFF1E4E7)))
-			)
 			.padding(24.dp),
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center
@@ -201,79 +207,42 @@ fun HomeScreen(nav: NavHostController) {
 		Spacer(Modifier.height(24.dp))
 		DirectDrawGifButton(onClick = { nav.navigate(Routes.DIRECT_DRAW) })
 		Spacer(Modifier.height(12.dp))
-		Button(
-			onClick = { nav.navigate(Routes.CUP_DRAW) },
-			modifier = Modifier.fillMaxWidth().height(52.dp),
-			shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
-			colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-				containerColor = Color(0xFFE1B0B6),
-				contentColor = Color.White
-			)
-		) { Text("摘杯抽籤") }
+		WtsWhiteButton(text = "摘杯抽籤", onClick = { nav.navigate(Routes.CUP_DRAW) }, modifier = Modifier.fillMaxWidth())
 		Spacer(Modifier.height(12.dp))
-		Button(
-			onClick = { nav.navigate(Routes.DAILY) },
-			modifier = Modifier.fillMaxWidth().height(52.dp),
-			shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
-			colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-				containerColor = Color(0xFFE1B0B6),
-				contentColor = Color.White
-			)
-		) { Text("每日一籤") }
+		WtsWhiteButton(text = "每日一籤", onClick = { nav.navigate(Routes.DAILY) }, modifier = Modifier.fillMaxWidth())
 		Spacer(Modifier.height(12.dp))
-		Button(
-			onClick = { nav.navigate(Routes.BROWSE) },
-			modifier = Modifier.fillMaxWidth().height(52.dp),
-			shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
-			colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-				containerColor = Color(0xFFE1B0B6),
-				contentColor = Color.White
-			)
-		) { Text("瀏覽籤文") }
+		WtsWhiteButton(text = "Deep Seek解籤", onClick = { nav.navigate(Routes.BROWSE) }, modifier = Modifier.fillMaxWidth())
+		Spacer(Modifier.height(12.dp))
+		WtsWhiteButton(text = "設置", onClick = { nav.navigate(Routes.SETTINGS) }, modifier = Modifier.fillMaxWidth())
 	}
 }
 
 @Composable
 private fun DirectDrawGifButton(onClick: () -> Unit) {
-    val infinite = rememberInfiniteTransition(label = "direct_draw_anim")
-    val pulse by infinite.animateFloat(
-        initialValue = 0.92f,
-        targetValue = 1.08f,
-        animationSpec = infiniteRepeatable(
-            animation = androidx.compose.animation.core.tween(
-                durationMillis = 1200,
-                easing = FastOutSlowInEasing
-            ),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulse"
-    )
-    val sweep by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = androidx.compose.animation.core.tween(
-                durationMillis = 2400,
-                easing = LinearEasing
-            )
-        ),
-        label = "sweep"
-    )
+    com.example.wtsaskingforsignature.ui.components.WtsWhiteButton(text = "直接求籤", onClick = onClick, modifier = Modifier.fillMaxWidth())
+}
 
-    val pink1 = Color(0xFFF4C2C2) // 粉紅莫蘭迪系
-    val pink2 = Color(0xFFE6A6B0)
-    val pink3 = Color(0xFFD19C97)
-
-    androidx.compose.material3.Button(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(52.dp),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
-        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFD8A2A6),
-            contentColor = Color.White
+@Composable
+private fun LanguageSelectorButton() {
+    val context = LocalContext.current
+    val currentLanguage = LanguageManager.getCurrentLanguage(context)
+    val showLanguageDialog = remember { mutableStateOf(false) }
+    
+    WtsWhiteButton(
+        text = "語言: ${currentLanguage.displayName}",
+        onClick = { showLanguageDialog.value = true },
+        modifier = Modifier.fillMaxWidth()
+    )
+    
+    if (showLanguageDialog.value) {
+        LanguageSelectionDialog(
+            currentLanguage = currentLanguage,
+            onLanguageSelected = { language ->
+                LanguageManager.setLanguage(context, language)
+                showLanguageDialog.value = false
+            },
+            onDismiss = { showLanguageDialog.value = false }
         )
-    ) {
-        Text("直接求籤", style = MaterialTheme.typography.titleMedium)
     }
 }
 
@@ -299,8 +268,8 @@ fun DirectDrawScreen(nav: NavHostController) {
 		CategorySelector(selected.value) { selected.value = it }
 		Spacer(Modifier.height(12.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.popBackStack() }) { Text("返回首頁") }
-			Button(onClick = { nav.navigate(Routes.STEPS) }, enabled = selected.value != null) { Text("下一步") }
+			WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
+			WtsWhiteButton(text = "下一步", onClick = { nav.navigate(Routes.STEPS) }, enabled = selected.value != null)
 		}
 	}
 }
@@ -329,8 +298,8 @@ fun CupDrawScreen(nav: NavHostController) {
 		CategorySelector(selected.value) { selected.value = it }
 		Spacer(Modifier.height(12.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.popBackStack() }) { Text("返回首頁") }
-			Button(onClick = { nav.navigate(Routes.STEPS) }, enabled = selected.value != null) { Text("下一步") }
+			WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
+			WtsWhiteButton(text = "下一步", onClick = { nav.navigate(Routes.STEPS) }, enabled = selected.value != null)
 		}
 	}
 }
@@ -359,13 +328,13 @@ fun DailyScreen(nav: NavHostController) {
 		CategorySelector(selected.value) { selected.value = it }
 		Spacer(Modifier.height(12.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.popBackStack() }) { Text("返回首頁") }
-			Button(onClick = {
+			WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
+			WtsWhiteButton(text = if (alreadyDrawn.value) "今日已抽" else "抽今日之籤", onClick = {
 				if (!alreadyDrawn.value && selected.value != null) {
 					alreadyDrawn.value = true
 					nav.navigate(Routes.STEPS)
 				}
-			}, enabled = !alreadyDrawn.value && selected.value != null) { Text(if (alreadyDrawn.value) "今日已抽" else "抽今日之籤") }
+			}, enabled = !alreadyDrawn.value && selected.value != null)
 		}
 	}
 }
@@ -374,8 +343,10 @@ fun DailyScreen(nav: NavHostController) {
 fun BrowseScreen(nav: NavHostController) {
 	val items = (1..100).map { it }
 	Column(Modifier.fillMaxSize().padding(16.dp)) {
-		Text("瀏覽籤文", style = MaterialTheme.typography.titleLarge)
+		Text("Deep Seek解籤", style = MaterialTheme.typography.titleLarge)
 		Spacer(Modifier.height(12.dp))
+		Text("1.請選擇靈籤編號")
+		Spacer(Modifier.height(8.dp))
 		Text("清單（1~100）：點擊編號查看全文")
 		Spacer(Modifier.height(12.dp))
 		val columns = 10
@@ -395,7 +366,10 @@ fun BrowseScreen(nav: NavHostController) {
 								.weight(1f)
 								.aspectRatio(1f),
 							shape = androidx.compose.foundation.shape.CircleShape,
-							contentPadding = androidx.compose.foundation.layout.PaddingValues(2.dp)
+							contentPadding = androidx.compose.foundation.layout.PaddingValues(2.dp),
+							colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+								containerColor = Color.White.copy(alpha = 0.5f)
+							)
 						) {
 							Text(text = "#${id}", maxLines = 1, style = MaterialTheme.typography.labelSmall)
 						}
@@ -443,7 +417,6 @@ fun StepsScreen(nav: NavHostController) {
 	Column(
 		Modifier
 			.fillMaxSize()
-			.background(Brush.verticalGradient(listOf(Color(0xFFF7ECEB), Color(0xFFF1E4E7))))
 			.padding(16.dp)
 	) {
 		Text("求籤步驟", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -499,18 +472,18 @@ fun StepsScreen(nav: NavHostController) {
 				.align(Alignment.CenterHorizontally)
 		)
 		Spacer(Modifier.height(12.dp))
-		Button(onClick = {
+		com.example.wtsaskingforsignature.ui.components.WtsWhiteButton(text = "開始求籤", onClick = {
 			WtsLogger.i("StepsScreen click: navigate to PREVIEW")
 			try {
 				nav.navigate(Routes.PREVIEW)
 			} catch (e: Exception) {
 				WtsLogger.e("StepsScreen navigate error: ${'$'}{e.message}", e)
 			}
-		}, modifier = Modifier.fillMaxWidth()) { Text("開始求籤") }
+		}, modifier = Modifier.fillMaxWidth())
 		Spacer(Modifier.height(12.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.popBackStack() }) { Text("上一步") }
-			OutlinedButton(onClick = { nav.navigateUp() }) { Text("返回") }
+			com.example.wtsaskingforsignature.ui.components.WtsWhiteButton(text = "上一步", onClick = { nav.popBackStack() })
+			com.example.wtsaskingforsignature.ui.components.WtsWhiteButton(text = "返回", onClick = { nav.navigateUp() })
 		}
 	}
 }
@@ -572,17 +545,13 @@ fun PreviewScreen(nav: NavHostController) {
 			modifier = Modifier.size(240.dp).align(Alignment.CenterHorizontally)
 		)
 		Spacer(Modifier.height(12.dp))
-		Button(
-			onClick = { nav.navigate(Routes.cup(data.value?.id ?: 1)) },
-			modifier = Modifier.fillMaxWidth().height(52.dp),
-			shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
-		) { Text("擲筊") }
+		WtsWhiteButton(text = "擲筊", onClick = { nav.navigate(Routes.cup(data.value?.id ?: 1)) }, modifier = Modifier.fillMaxWidth())
 		Spacer(Modifier.height(12.dp))
-		OutlinedButton(onClick = { nav.navigate(Routes.content(data.value?.id ?: 1)) }) { Text("直接查看籤文") }
+		WtsWhiteButton(text = "直接查看籤文", onClick = { nav.navigate(Routes.content(data.value?.id ?: 1)) })
 		Spacer(Modifier.weight(1f))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.popBackStack() }) { Text("返回") }
-			OutlinedButton(onClick = { nav.navigate(Routes.CUP) }) { Text("下一步") }
+			WtsWhiteButton(text = "返回", onClick = { nav.popBackStack() })
+			WtsWhiteButton(text = "下一步", onClick = { nav.navigate(Routes.CUP) })
 		}
 	}
 }
@@ -622,14 +591,14 @@ fun CupScreen(nav: NavHostController, id: Int) {
 		Spacer(Modifier.height(16.dp))
 		if (countWts03 < 2) {
 			Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-				OutlinedButton(onClick = { nav.navigate(Routes.content(id)) }, modifier = Modifier.weight(1f)) { Text("直接查看簽文") }
-				Button(onClick = { regenerate() }, modifier = Modifier.weight(1f)) { Text("重新擲筊") }
+				WtsWhiteButton(text = "直接查看簽文", onClick = { nav.navigate(Routes.content(id)) }, modifier = Modifier.weight(1f))
+				WtsPrimaryButton(text = "重新擲筊", onClick = { regenerate() }, modifier = Modifier.weight(1f))
 			}
 		}
 		Spacer(Modifier.weight(1f))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.navigate(Routes.DIRECT_DRAW) }) { Text("返回抽籤") }
-			OutlinedButton(onClick = { nav.navigate(Routes.HOME) }) { Text("回首頁") }
+			WtsWhiteButton(text = "返回抽籤", onClick = { nav.navigate(Routes.DIRECT_DRAW) })
+			WtsWhiteButton(text = "回首頁", onClick = { nav.navigate(Routes.HOME) })
 		}
 	}
 }
@@ -643,8 +612,8 @@ fun CupResultScreen(nav: NavHostController, valid: Boolean) {
 		Text(info)
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.navigate(Routes.DIRECT_DRAW) }) { Text("重新抽籤") }
-			Button(onClick = { nav.navigate(Routes.content(1)) }, enabled = valid) { Text("查看籤文內容") }
+			WtsWhiteButton(text = "重新抽籤", onClick = { nav.navigate(Routes.DIRECT_DRAW) })
+			WtsWhiteButton(text = "查看籤文內容", onClick = { nav.navigate(Routes.content(1)) })
 		}
 	}
 }
@@ -654,7 +623,6 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 	val loading = remember { mutableStateOf(true) }
 	val error = remember { mutableStateOf<String?>(null) }
 	val content = remember { mutableStateOf<DrawResponse?>(null) }
-	val ctx = LocalContext.current
 
 	LaunchedEffect(id) {
 		WtsLogger.i("ContentScreen loading id=${id}")
@@ -770,7 +738,8 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 		}
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-			OutlinedButton(
+			WtsWhiteButton(
+				text = "Deep Seek解籤",
 				onClick = {
 					// 傳遞籤文內容與標題給新版對話頁，作為 DeepSeek 解籤依據
 					val rawForChat = content.value?.content ?: ""
@@ -780,12 +749,12 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 					nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id))
 				},
 				modifier = Modifier.fillMaxWidth()
-			) { Text("deekseek解签") }
+			)
 		}
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			OutlinedButton(onClick = { nav.navigateUp() }) { Text("返回") }
-			OutlinedButton(onClick = { nav.navigate(Routes.HOME) }) { Text("回首頁") }
+			WtsWhiteButton(text = "返回", onClick = { nav.navigateUp() })
+			WtsWhiteButton(text = "回首頁", onClick = { nav.navigate(Routes.HOME) })
 		}
 	}
 }
@@ -802,8 +771,8 @@ fun ChatScreen(nav: NavHostController, id: Int) {
 		Text("對話界面（DeepSeek） — 第 $id 籤", style = MaterialTheme.typography.titleLarge)
 		Spacer(Modifier.height(12.dp))
 		Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-			messages.forEach { m ->
-				Text("[${'$'}{m.role}] ${'$'}{m.content}")
+			messages.forEach { message ->
+				Text("[${message.role}] ${message.content}")
 				Spacer(Modifier.height(8.dp))
 			}
 			if (error.value != null) {
@@ -839,4 +808,86 @@ fun ChatScreen(nav: NavHostController, id: Int) {
 			OutlinedButton(onClick = { nav.navigate(Routes.HOME) }) { Text("回首頁") }
 		}
 	}
+}
+
+/**
+ * 語言選擇對話框
+ */
+@Composable
+private fun LanguageSelectionDialog(
+    currentLanguage: Language,
+    onLanguageSelected: (Language) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("選擇語言") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                LanguageManager.getAllSupportedLanguages().forEach { language ->
+                    LanguageOptionCard(
+                        language = language,
+                        isSelected = language == currentLanguage,
+                        onClick = { onLanguageSelected(language) }
+                    )
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {}
+    )
+}
+
+/**
+ * 語言選項卡片
+ */
+@Composable
+private fun LanguageOptionCard(
+    language: Language,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) 
+                MaterialTheme.colorScheme.primaryContainer 
+            else 
+                MaterialTheme.colorScheme.surface
+        ),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 語言名稱
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = language.displayName,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = language.code.uppercase(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            
+            // 選擇指示器
+            if (isSelected) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
 }

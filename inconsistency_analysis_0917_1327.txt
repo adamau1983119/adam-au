@@ -1,0 +1,32 @@
+﻿Build Inconsistency Analysis Report
+Generated: 09/17/2025 13:27:45
+
+CRITICAL ISSUES (7):
+- Dynamic resources (getIdentifier) may fail after ProGuard
+- Dynamic resources may be removed by resource shrinking
+- Debug uses original code, Release uses minified/obfuscated code
+- Critical drawable wong_tai_sin not found
+- Critical drawable wts03 not found
+- Critical drawable wts04 not found
+- Critical drawable wts05 not found
+
+
+WARNINGS (2):
+- AdMob functionality may be affected by obfuscation
+- DeepSeek API calls may fail due to JSON serialization issues
+
+
+MOST LIKELY ROOT CAUSE:
+Dynamic resource loading (getIdentifier) fails after ProGuard obfuscation.
+Images like wong_tai_sin, wts03, wts04, wts05 cannot be loaded in release build.
+
+IMMEDIATE SOLUTION:
+Add R class protection rules to proguard-rules.pro:
+-keep class **.R$* { *; }
+-keepclassmembers class **.R$* { public static <fields>; }
+
+VERIFICATION STEPS:
+1. Add ProGuard rules
+2. Clean rebuild
+3. Test release APK
+4. Compare with debug behavior

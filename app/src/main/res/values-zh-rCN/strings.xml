@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">WTS灵签</string>
+    
+    <!-- Main Screen -->
+    <string name="main_title">黄大仙灵签</string>
+    <string name="direct_draw">直接求签</string>
+    <string name="cup_draw">摘杯抽签</string>
+    <string name="daily_fortune">每日一签</string>
+    <string name="browse_fortunes">Deep Seek解签</string>
+    <string name="test_api">测试API</string>
+    
+    <!-- Fortune Categories -->
+    <string name="career">事业</string>
+    <string name="wealth">财运</string>
+    <string name="health">健康</string>
+    <string name="love">感情</string>
+    <string name="family">家庭</string>
+    <string name="travel">迁徙</string>
+    <string name="reputation">名誉</string>
+    <string name="friendship">友谊</string>
+    <string name="other">其他</string>
+    
+    <!-- Fortune Steps -->
+    <string name="step_1">1. 双手合十，默念「黄大仙有求必应」3次</string>
+    <string name="step_2">2. 默念自己姓名，出生地点及时间，年龄及所求之事</string>
+    <string name="step_3">3. 点击下方按钮开始抽签</string>
+    
+    <!-- Fortune Results -->
+    <string name="fortune_result">你已抽中</string>
+    <string name="fortune_number">第%d签</string>
+    <string name="fortune_title">%s</string>
+    <string name="fortune_summary">%s</string>
+    <string name="fortune_content">%s</string>
+    
+    <!-- Cup Throwing -->
+    <string name="cup_instructions">请掷杯三次，每次掷杯后，请等待杯静止，再按下掷杯按钮，完成三次掷杯。</string>
+    <string name="cup_result">掷杯结果</string>
+    <string name="cup_valid">有效</string>
+    <string name="cup_invalid">无效</string>
+    
+    <!-- AI Interpretation -->
+    <string name="ai_interpretation">AI智能解签</string>
+    <string name="ask_question">输入问题（200字内）</string>
+    <string name="send">发送</string>
+    <string name="sending">传送中...</string>
+    
+    <!-- Navigation -->
+    <string name="back">返回</string>
+    <string name="home">首页</string>
+    <string name="next">下一步</string>
+    <string name="previous">上一步</string>
+    
+    <!-- Common -->
+    <string name="loading">加载中...</string>
+    <string name="error">错误</string>
+    <string name="success">成功</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="ok">确定</string>
+    
+    <!-- Fortune Levels -->
+    <string name="excellent">上上签</string>
+    <string name="good">上签</string>
+    <string name="average">中签</string>
+    <string name="poor">下签</string>
+    
+    <!-- AI Advice Categories -->
+    <string name="key_summary">重点摘要</string>
+    <string name="fortune_interpretation">吉凶解读</string>
+    <string name="action_advice">行动建议</string>
+    <string name="precautions">注意事项</string>
+    <string name="one_sentence_advice">一句忠告</string>
+    <string name="comprehensive_analysis">紫微斗数综合</string>
+    
+    <!-- Settings -->
+    <string name="settings">设置</string>
+    <string name="language">语言</string>
+    <string name="theme">主题</string>
+    <string name="notifications">通知</string>
+    
+    <!-- About -->
+    <string name="about">关于</string>
+    <string name="version">版本</string>
+    <string name="privacy_policy">隐私政策</string>
+    <string name="terms_of_service">服务条款</string>
+    
+    <!-- Messages -->
+    <string name="no_internet">无需网络连接</string>
+    <string name="offline_available">所有功能离线可用</string>
+    <string name="local_ai">本地AI驱动</string>
+    <string name="fortune_disclaimer">此解签仅供参考，具体行动请结合实际情况。</string>
+</resources>

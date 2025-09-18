@@ -1,0 +1,47 @@
+﻿Content Verification Report
+Generated: 09/17/2025 13:41:11
+
+VERIFICATION SUMMARY:
+- Verified Components: 26
+- Issues Found: 1
+- Status: DIFFERENCES DETECTED
+
+VERIFIED COMPONENTS:
+??Source: MainActivity.kt
+??Source: DSFortuneApp.kt
+??Source: Screens.kt
+??Source: AdManager.kt
+??Source: ServiceLocator.kt
+??Source: DeepSeekApi.kt
+??Resource: wong_tai_sin.png
+??Resource: wts03.png
+??Resource: wts04.png
+??Resource: wts05.png
+??Asset: fortunes_source.csv
+??Asset: fortunes_cn.csv
+??Asset: fortunes_en2.csv
+??Config: build.gradle.kts
+??Config: proguard-rules.pro
+??Config: AndroidManifest.xml
+??Config: AndroidManifest.xml
+??Config: AndroidManifest.xml
+??APK: Debug version
+??APK: Release version
+??Hash: Screens.kt
+??Hash: AdManager.kt
+??Hash: fortunes_source.csv
+??Feature: DeepSeek API
+??Feature: Cup throwing
+??Feature: User profile
+
+
+ISSUES FOUND:
+??AdMob implementation incomplete
+
+
+CONCLUSION:
+WARNING: Differences detected between packaged and simulator content. Review issues above.
+
+BUILD INFORMATION:
+Debug APK: 09/17/2025 13:31:17 - 36.9 MB
+Release APK: 09/17/2025 13:30:55 - 11.9 MB

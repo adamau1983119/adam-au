@@ -1,4 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WTS靈簽</string>
+    <!-- App Name -->
+    <string name="app_name">WTS Fortune Sticks</string>
+    
+    <!-- Main Screen -->
+    <string name="main_title">Wong Tai Sin Fortune Sticks</string>
+    <string name="direct_draw">Direct Fortune Drawing</string>
+    <string name="cup_draw">Cup Fortune Drawing</string>
+    <string name="daily_fortune">Daily Fortune</string>
+    <string name="browse_fortunes">Browse Fortunes</string>
+    <string name="test_api">Test API</string>
+    
+    <!-- Fortune Categories -->
+    <string name="career">Career</string>
+    <string name="wealth">Wealth</string>
+    <string name="health">Health</string>
+    <string name="love">Love</string>
+    <string name="family">Family</string>
+    <string name="travel">Travel</string>
+    <string name="reputation">Reputation</string>
+    <string name="friendship">Friendship</string>
+    <string name="other">Other</string>
+    
+    <!-- Fortune Steps -->
+    <string name="step_1">1. Place your hands together and silently recite "Wong Tai Sin answers all prayers" 3 times</string>
+    <string name="step_2">2. Silently recite your name, birthplace and time, age, and what you seek</string>
+    <string name="step_3">3. Click the button below to start drawing</string>
+    
+    <!-- Fortune Results -->
+    <string name="fortune_result">You have drawn</string>
+    <string name="fortune_number">Fortune #%d</string>
+    <string name="fortune_title">%s</string>
+    <string name="fortune_summary">%s</string>
+    <string name="fortune_content">%s</string>
+    
+    <!-- Cup Throwing -->
+    <string name="cup_instructions">Please throw the cups three times. After each throw, wait for the cups to settle before pressing the throw button. Complete three throws.</string>
+    <string name="cup_result">Cup Result</string>
+    <string name="cup_valid">Valid</string>
+    <string name="cup_invalid">Invalid</string>
+    
+    <!-- AI Interpretation -->
+    <string name="ai_interpretation">AI Fortune Interpretation</string>
+    <string name="ask_question">Ask a question (within 200 characters)</string>
+    <string name="send">Send</string>
+    <string name="sending">Sending...</string>
+    
+    <!-- Navigation -->
+    <string name="back">Back</string>
+    <string name="home">Home</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    
+    <!-- Common -->
+    <string name="loading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="ok">OK</string>
+    
+    <!-- Fortune Levels -->
+    <string name="excellent">Excellent</string>
+    <string name="good">Good</string>
+    <string name="average">Average</string>
+    <string name="poor">Poor</string>
+    
+    <!-- AI Advice Categories -->
+    <string name="key_summary">Key Summary</string>
+    <string name="fortune_interpretation">Fortune Interpretation</string>
+    <string name="action_advice">Action Advice</string>
+    <string name="precautions">Precautions</string>
+    <string name="one_sentence_advice">One Sentence Advice</string>
+    <string name="comprehensive_analysis">Comprehensive Analysis</string>
+    
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="notifications">Notifications</string>
+    
+    <!-- About -->
+    <string name="about">About</string>
+    <string name="version">Version</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+    
+    <!-- Messages -->
+    <string name="no_internet">No internet connection required</string>
+    <string name="offline_available">All features available offline</string>
+    <string name="local_ai">Powered by Local AI</string>
+    <string name="fortune_disclaimer">This fortune interpretation is for reference only. Please make decisions based on your own judgment.</string>
 </resources>
