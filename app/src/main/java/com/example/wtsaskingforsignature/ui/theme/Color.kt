@@ -15,11 +15,11 @@ val MdOutline = Color(0xFFD8C8CC)       // 邊框/分隔
 val MdGradientTop = Color(0xFFF7ECEB)
 val MdGradientBottom = Color(0xFFF1E4E7)
 
-// 深色模式對應（維持藕粉調性，對比增強）
-val MdPrimaryDark = Color(0xFFD7B5BC)
-val MdOnPrimaryDark = Color(0xFF1A1315)
-val MdSecondaryDark = Color(0xFF8D6F77)
-val MdBackgroundDark = Color(0xFF1E1C1D)
-val MdSurfaceDark = Color(0xFF272325)
-val MdOnSurfaceDark = Color(0xFFEFE8EA)
-val MdOutlineDark = Color(0xFF3A3236)
+// 深色模式對應（針對黑色背景手機設定優化，確保文字清楚可見）
+val MdPrimaryDark = Color(0xFFE1B0B6)      // 主色保持亮度
+val MdOnPrimaryDark = Color(0xFF000000)     // 主色上的文字改為純黑
+val MdSecondaryDark = Color(0xFFF1D4DA)     // 次色保持亮度
+val MdBackgroundDark = Color(0xFF000000)    // 背景改為純黑，配合手機設定
+val MdSurfaceDark = Color(0xFF2A2A2A)       // 表面色改為深灰，與純黑背景形成對比
+val MdOnSurfaceDark = Color(0xFFFFFFFF)     // 表面文字改為純白
+val MdOutlineDark = Color(0xFF666666)       // 邊框改為更亮的灰色，增加可見性
