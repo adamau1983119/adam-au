@@ -578,8 +578,18 @@ fun CupScreen(nav: NavHostController, id: Int) {
 	val countWts03 = rolls.value.count { it == R.drawable.wts03 }
 	val isValidResult = countWts03 >= 2
 	
-	// 移除自動跳轉，讓用戶自行決定下一步
-	// LaunchedEffect 自動跳轉已被移除以避免意外彈出
+	// 自動跳轉邏輯：當獲得聖筊時自動跳轉到籤文界面
+	LaunchedEffect(rolls.value) {
+		if (isValidResult && !isNavigating.value) {
+			WtsLogger.i("CupScreen: 獲得聖筊，3秒後自動跳轉到籤文界面")
+			// 給用戶3秒時間查看結果，然後自動跳轉
+			kotlinx.coroutines.delay(3000)
+			if (!isNavigating.value) {
+				isNavigating.value = true
+				nav.navigate(Routes.content(id))
+			}
+		}
+	}
 
 	Column(Modifier.fillMaxSize().padding(16.dp)) {
 		Text("擲筊", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -598,7 +608,7 @@ fun CupScreen(nav: NavHostController, id: Int) {
 		// 顯示擲筊結果提示
 		if (rolls.value.isNotEmpty()) {
 			val resultText = when {
-				isValidResult -> "🎉 獲得聖筊！可以查看籤文了"
+				isValidResult -> "🎉 獲得聖筊！3秒後自動跳轉到籤文界面"
 				countWts03 == 1 -> "獲得1個聖筊，可重新擲筊或直接查看"
 				else -> "未獲得聖筊，建議重新擲筊"
 			}
