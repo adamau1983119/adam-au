@@ -38,9 +38,7 @@ class AdManager(private val context: Context) {
 
         Log.d(TAG, "Starting to load ad...")
         _isAdLoading.value = true
-        val adRequest = AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR) // 添加模擬器測試設備
-            .build()
+        val adRequest = AdRequest.Builder().build()
         val adUnitId = "ca-app-pub-3940256099942544/1033173712" // 測試廣告單元ID
         Log.d(TAG, "Loading ad with unit ID: $adUnitId")
 
