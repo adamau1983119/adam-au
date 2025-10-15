@@ -18,16 +18,6 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    // 定義簽章設定需在 buildTypes 之前
-    signingConfigs {
-        create("release") {
-            storeFile = file("wts-release-key.keystore")
-            storePassword = "123456"  // 先嘗試最常見的密碼
-            keyAlias = "wts-key"
-            keyPassword = "123456"   // 先嘗試最常見的密碼
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -36,7 +26,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            // 暫時移除簽名配置，使用 debug 簽名
             // 確保版本一致性
             buildConfigField("String", "BUILD_TYPE", "\"release\"")
             buildConfigField("String", "API_BASE_URL", "\"https://api.deepseek.com/\"")
