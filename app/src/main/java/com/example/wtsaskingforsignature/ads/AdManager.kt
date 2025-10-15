@@ -76,18 +76,19 @@ class AdManager(private val context: Context) {
         
         if (interstitialAd != null) {
             Log.d(TAG, "Showing interstitial ad...")
-            interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+            val adToShow = interstitialAd
+            interstitialAd = null // 立即清空，防止重複使用
+            
+            adToShow?.fullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
                     Log.d(TAG, "Ad was dismissed.")
-                    interstitialAd = null
-                    preloadAd() // 廣告關閉後預載入下一個廣告
+                    preloadAd() // 預載入下一個廣告
                     onAdDismissed()
                 }
 
                 override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                     Log.e(TAG, "Ad failed to show: ${adError.message}")
-                    interstitialAd = null
-                    preloadAd() // 廣告顯示失敗後預載入下一個廣告
+                    preloadAd() // 預載入下一個廣告
                     onAdDismissed()
                 }
 
@@ -95,7 +96,7 @@ class AdManager(private val context: Context) {
                     Log.d(TAG, "Ad showed on full screen content.")
                 }
             }
-            interstitialAd?.show(activity)
+            adToShow?.show(activity)
             return true
         } else {
             Log.d(TAG, "Interstitial ad wasn't ready yet.")
