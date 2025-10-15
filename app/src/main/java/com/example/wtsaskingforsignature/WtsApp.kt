@@ -1,8 +1,14 @@
 package com.example.wtsaskingforsignature
 
 import android.app.Application
+import com.google.android.gms.ads.MobileAds
+import com.example.wtsaskingforsignature.ads.AdManager
 import com.example.wtsaskingforsignature.data.ServiceLocator
 import com.example.wtsaskingforsignature.util.WtsLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class WtsApp : Application() {
 	companion object {
@@ -10,12 +16,32 @@ class WtsApp : Application() {
 			private set
 	}
 
+	// 廣告管理器
+	lateinit var adManager: AdManager
+		private set
+
+	// 應用程式範圍的協程作用域
+	private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
 	override fun onCreate() {
 		super.onCreate()
 		instance = this
 		
+		// 初始化Google Mobile Ads SDK
+		MobileAds.initialize(this) { initializationStatus ->
+			WtsLogger.i("AdMob SDK initialized")
+		}
+		
+		// 初始化廣告管理器
+		adManager = AdManager(this)
+		
 		// 使用本地資料庫作為主要數據源
 		ServiceLocator.dataSource = 1
+		
+		// 預載入廣告
+		applicationScope.launch {
+			adManager.preloadAd()
+		}
 		
 		WtsLogger.i("WtsApp initialized, using local database")
 	}

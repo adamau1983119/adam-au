@@ -11,8 +11,8 @@ android {
         applicationId = "com.wts.dsfortune"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.0.8"
+        versionCode = 18
+        versionName = "18"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -22,9 +22,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("wts-release-key.keystore")
-            storePassword = "123456"
+            storePassword = "123456"  // 先嘗試最常見的密碼
             keyAlias = "wts-key"
-            keyPassword = "123456"
+            keyPassword = "123456"   // 先嘗試最常見的密碼
         }
     }
 

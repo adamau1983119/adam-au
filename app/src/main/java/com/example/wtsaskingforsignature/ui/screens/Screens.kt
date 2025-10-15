@@ -78,6 +78,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.example.wtsaskingforsignature.WtsApp
+import com.example.wtsaskingforsignature.ads.AdManager
  
 
 @Composable
@@ -340,6 +344,14 @@ fun DailyScreen(nav: NavHostController) {
 @Composable
 fun BrowseScreen(nav: NavHostController) {
 	val items = (1..100).map { it }
+	
+	// 廣告相關狀態
+	val isShowingAd = remember { mutableStateOf(false) }
+	val context = LocalContext.current
+	val application = context.applicationContext as WtsApp
+	val adManager = application.adManager
+	val coroutineScope = rememberCoroutineScope()
+	
 	Column(Modifier.fillMaxSize().padding(16.dp)) {
 		Text("Deep Seek解籤", style = MaterialTheme.typography.titleLarge)
 		Spacer(Modifier.height(12.dp))
@@ -358,7 +370,18 @@ fun BrowseScreen(nav: NavHostController) {
 						OutlinedButton(
 							onClick = {
 								WtsLogger.i("Browse click id=$id")
-								nav.navigate(Routes.content(id))
+								// 點擊查看籤文時觸發廣告
+								coroutineScope.launch {
+									isShowingAd.value = true
+									val adShown = adManager.showInterstitialAd {
+										isShowingAd.value = false
+									}
+									if (!adShown) {
+										isShowingAd.value = false
+									}
+									// 廣告關閉後跳轉到籤文內容
+									nav.navigate(Routes.content(id))
+								}
 							},
 							modifier = Modifier
 								.weight(1f)
@@ -378,6 +401,36 @@ fun BrowseScreen(nav: NavHostController) {
 			}
 			Spacer(Modifier.height(6.dp))
 		}
+		
+		// 廣告載入狀態提示
+		if (isShowingAd.value) {
+			Card(
+				modifier = Modifier.fillMaxWidth(),
+				colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+				shape = RoundedCornerShape(12.dp)
+			) {
+				Row(
+					modifier = Modifier.padding(16.dp),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.Center
+				) {
+					CircularProgressIndicator(
+						modifier = Modifier.size(20.dp),
+						color = MaterialTheme.colorScheme.primary,
+						strokeWidth = 2.dp
+					)
+					Spacer(modifier = Modifier.width(12.dp))
+					Text(
+						text = "正在載入廣告...",
+						style = MaterialTheme.typography.bodyMedium,
+						color = MaterialTheme.colorScheme.onPrimaryContainer
+					)
+				}
+			}
+			
+			Spacer(modifier = Modifier.height(16.dp))
+		}
+		
 		Spacer(Modifier.height(16.dp))
 		OutlinedButton(onClick = { nav.popBackStack() }) { Text("返回首頁") }
 	}
@@ -672,6 +725,25 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 	val loading = remember { mutableStateOf(true) }
 	val error = remember { mutableStateOf<String?>(null) }
 	val content = remember { mutableStateOf<DrawResponse?>(null) }
+	
+	// 廣告相關狀態
+	val isShowingAd = remember { mutableStateOf(false) }
+	val context = LocalContext.current
+	val application = context.applicationContext as WtsApp
+	val adManager = application.adManager
+	val coroutineScope = rememberCoroutineScope()
+
+	// 進入籤文內容頁面時觸發廣告
+	LaunchedEffect(Unit) {
+		kotlinx.coroutines.delay(500) // 延遲500ms後顯示廣告
+		isShowingAd.value = true
+		val adShown = adManager.showInterstitialAd {
+			isShowingAd.value = false
+		}
+		if (!adShown) {
+			isShowingAd.value = false
+		}
+	}
 
 	LaunchedEffect(id) {
 		WtsLogger.i("ContentScreen loading id=${id}")
@@ -785,17 +857,57 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 		} else {
 			Text(if (loading.value) "載入中..." else error.value ?: "無內容（請確認 assets/fortunes.json 是否有 id=${id} 的條目）")
 		}
+		
+		// 廣告載入狀態提示
+		if (isShowingAd.value) {
+			Card(
+				modifier = Modifier.fillMaxWidth(),
+				colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+				shape = RoundedCornerShape(12.dp)
+			) {
+				Row(
+					modifier = Modifier.padding(16.dp),
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.Center
+				) {
+					CircularProgressIndicator(
+						modifier = Modifier.size(20.dp),
+						color = MaterialTheme.colorScheme.primary,
+						strokeWidth = 2.dp
+					)
+					Spacer(modifier = Modifier.width(12.dp))
+					Text(
+						text = "正在載入廣告...",
+						style = MaterialTheme.typography.bodyMedium,
+						color = MaterialTheme.colorScheme.onPrimaryContainer
+					)
+				}
+			}
+			
+			Spacer(modifier = Modifier.height(16.dp))
+		}
+		
 		Spacer(Modifier.height(24.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
 			WtsWhiteButton(
 				text = "Deep Seek解籤",
 				onClick = {
-					// 傳遞籤文內容與標題給新版對話頁，作為 DeepSeek 解籤依據
-					val rawForChat = content.value?.content ?: ""
-					val titleForChat = titleText
-					nav.currentBackStackEntry?.savedStateHandle?.set("chat_context", rawForChat)
-					nav.currentBackStackEntry?.savedStateHandle?.set("chat_title", titleForChat)
-					nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id))
+					// 點擊DeepSeek解籤按鈕時觸發廣告
+					coroutineScope.launch {
+						isShowingAd.value = true
+						val adShown = adManager.showInterstitialAd {
+							isShowingAd.value = false
+						}
+						if (!adShown) {
+							isShowingAd.value = false
+						}
+						// 廣告關閉後跳轉到對話界面
+						val rawForChat = content.value?.content ?: ""
+						val titleForChat = titleText
+						nav.currentBackStackEntry?.savedStateHandle?.set("chat_context", rawForChat)
+						nav.currentBackStackEntry?.savedStateHandle?.set("chat_title", titleForChat)
+						nav.navigate(com.example.wtsaskingforsignature.Routes.chatNew(id))
+					}
 				},
 				modifier = Modifier.fillMaxWidth()
 			)
