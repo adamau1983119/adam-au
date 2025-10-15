@@ -59,14 +59,14 @@ class AdManager(private val context: Context) {
 
     /**
      * 顯示插頁式廣告
+     * @param activity 要顯示廣告的 Activity
      * @param onAdDismissed 廣告關閉後的回調
      * @return 如果廣告成功顯示則返回 true，否則返回 false
      */
-    fun showInterstitialAd(onAdDismissed: () -> Unit): Boolean {
+    fun showInterstitialAd(activity: android.app.Activity?, onAdDismissed: () -> Unit): Boolean {
         Log.d(TAG, "showInterstitialAd() called")
-        val activity = context as? android.app.Activity
         if (activity == null) {
-            Log.e(TAG, "Context is not an Activity, cannot show ad.")
+            Log.e(TAG, "Activity is null, cannot show ad.")
             onAdDismissed()
             return false
         }

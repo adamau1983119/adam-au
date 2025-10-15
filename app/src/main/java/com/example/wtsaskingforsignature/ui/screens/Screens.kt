@@ -373,7 +373,8 @@ fun BrowseScreen(nav: NavHostController) {
 								// 點擊查看籤文時觸發廣告
 								coroutineScope.launch {
 									isShowingAd.value = true
-									val adShown = adManager.showInterstitialAd {
+									val activity = context as? android.app.Activity
+									val adShown = adManager.showInterstitialAd(activity) {
 										isShowingAd.value = false
 									}
 									if (!adShown) {
@@ -739,7 +740,12 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 		kotlinx.coroutines.delay(1000) // 延遲1秒後顯示廣告，給廣告更多時間載入
 		WtsLogger.i("ContentScreen: Showing ad")
 		isShowingAd.value = true
-		val adShown = adManager.showInterstitialAd {
+		
+		// 獲取 Activity
+		val activity = context as? android.app.Activity
+		WtsLogger.i("ContentScreen: Activity found: ${activity?.javaClass?.simpleName}")
+		
+		val adShown = adManager.showInterstitialAd(activity) {
 			WtsLogger.i("ContentScreen: Ad dismissed")
 			isShowingAd.value = false
 		}
