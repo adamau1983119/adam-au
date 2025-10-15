@@ -122,6 +122,10 @@ dependencies {
     // Google AdMob 广告
     implementation("com.google.android.gms:play-services-ads:22.6.0")
     
+    // Play Integrity API
+    implementation("com.google.android.play:integrity:1.3.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    
     // DeepSeek API Dependencies
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

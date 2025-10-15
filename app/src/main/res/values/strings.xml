@@ -3,6 +3,10 @@
     <!-- App Name -->
     <string name="app_name">WTS Fortune Sticks</string>
     
+    <!-- API Keys -->
+    <string name="play_integrity_api_key">AIzaSyDSgstr7km_iFsUJokIfv8F3S9ERWzWad8</string>
+    <string name="admob_interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    
     <!-- Main Screen -->
     <string name="main_title">Wong Tai Sin Fortune Sticks</string>
     <string name="direct_draw">Direct Fortune Drawing</string>

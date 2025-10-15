@@ -3,6 +3,7 @@ package com.example.wtsaskingforsignature
 import android.app.Application
 import com.google.android.gms.ads.MobileAds
 import com.example.wtsaskingforsignature.ads.AdManager
+import com.example.wtsaskingforsignature.integrity.IntegrityVerificationService
 import com.example.wtsaskingforsignature.data.ServiceLocator
 import com.example.wtsaskingforsignature.util.WtsLogger
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +19,10 @@ class WtsApp : Application() {
 
 	// 廣告管理器
 	lateinit var adManager: AdManager
+		private set
+	
+	// 完整性驗證服務
+	lateinit var integrityService: IntegrityVerificationService
 		private set
 
 	// 應用程式範圍的協程作用域
@@ -35,11 +40,16 @@ class WtsApp : Application() {
 		// 初始化廣告管理器
 		adManager = AdManager(this)
 		
+		// 初始化完整性驗證服務
+		integrityService = IntegrityVerificationService(this)
+		
 		// 使用本地資料庫作為主要數據源
 		ServiceLocator.dataSource = 1
 		
-		// 預載入廣告
+		// 在背景初始化服務
 		applicationScope.launch {
+			integrityService.initializeIntegrity()
+			// 預載入廣告
 			adManager.preloadAd()
 		}
 		
