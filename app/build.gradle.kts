@@ -11,8 +11,8 @@ android {
         applicationId = "com.wts.dsfortune"
         minSdk = 26
         targetSdk = 36
-        versionCode = 18
-        versionName = "18"
+        versionCode = 19
+        versionName = "19"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
