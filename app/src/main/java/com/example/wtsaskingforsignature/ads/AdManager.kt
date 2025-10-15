@@ -30,14 +30,19 @@ class AdManager(private val context: Context) {
      * 預載入插頁式廣告
      */
     fun preloadAd() {
+        Log.d(TAG, "preloadAd() called")
         if (interstitialAd != null || _isAdLoading.value) {
             Log.d(TAG, "Ad already loaded or loading.")
             return
         }
 
+        Log.d(TAG, "Starting to load ad...")
         _isAdLoading.value = true
-        val adRequest = AdRequest.Builder().build()
+        val adRequest = AdRequest.Builder()
+            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR) // 添加模擬器測試設備
+            .build()
         val adUnitId = "ca-app-pub-3940256099942544/1033173712" // 測試廣告單元ID
+        Log.d(TAG, "Loading ad with unit ID: $adUnitId")
 
         InterstitialAd.load(context, adUnitId, adRequest, object : InterstitialAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -60,6 +65,7 @@ class AdManager(private val context: Context) {
      * @return 如果廣告成功顯示則返回 true，否則返回 false
      */
     fun showInterstitialAd(onAdDismissed: () -> Unit): Boolean {
+        Log.d(TAG, "showInterstitialAd() called")
         val activity = context as? android.app.Activity
         if (activity == null) {
             Log.e(TAG, "Context is not an Activity, cannot show ad.")
@@ -67,7 +73,11 @@ class AdManager(private val context: Context) {
             return false
         }
 
+        Log.d(TAG, "Activity found: ${activity.javaClass.simpleName}")
+        Log.d(TAG, "InterstitialAd is null: ${interstitialAd == null}")
+        
         if (interstitialAd != null) {
+            Log.d(TAG, "Showing interstitial ad...")
             interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
                     Log.d(TAG, "Ad was dismissed.")

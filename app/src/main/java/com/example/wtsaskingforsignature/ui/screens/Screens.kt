@@ -735,12 +735,18 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 
 	// 進入籤文內容頁面時觸發廣告
 	LaunchedEffect(Unit) {
-		kotlinx.coroutines.delay(500) // 延遲500ms後顯示廣告
+		WtsLogger.i("ContentScreen: Starting ad trigger")
+		kotlinx.coroutines.delay(1000) // 延遲1秒後顯示廣告，給廣告更多時間載入
+		WtsLogger.i("ContentScreen: Showing ad")
 		isShowingAd.value = true
 		val adShown = adManager.showInterstitialAd {
+			WtsLogger.i("ContentScreen: Ad dismissed")
 			isShowingAd.value = false
 		}
+		WtsLogger.i("ContentScreen: Ad shown result: $adShown")
 		if (!adShown) {
+			WtsLogger.w("ContentScreen: Ad not shown, trying to preload again")
+			adManager.preloadAd()
 			isShowingAd.value = false
 		}
 	}
