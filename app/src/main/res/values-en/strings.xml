@@ -97,8 +97,8 @@
     <string name="return_to_home">Return Home</string>
     <string name="regenerate_cup">Regenerate Cup</string>
     <string name="loading_text">Loading...</string>
-    <string name="fortune_header_format">Fortune %s: %s</string>
-    <string name="fortune_header_simple">Fortune %s</string>
+    <string name="fortune_header_format" formatted="false">Fortune %s: %s</string>
+    <string name="fortune_header_simple" formatted="false">Fortune %s</string>
     
     <!-- Fortune Display Related -->
     <string name="fortune_poem_title">Fortune Poem</string>

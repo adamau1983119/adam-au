@@ -20,7 +20,7 @@ class PlayIntegrityManager(private val context: Context) {
     
     companion object {
         private const val TAG = "PlayIntegrityManager"
-        private const val CLOUD_PROJECT_NUMBER = "475203"
+        private const val CLOUD_PROJECT_NUMBER = 475203L
     }
     
     /**
