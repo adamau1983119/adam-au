@@ -907,7 +907,8 @@ fun ContentScreen(nav: NavHostController, id: Int) {
 					// 點擊DeepSeek解籤按鈕時觸發廣告
 					coroutineScope.launch {
 						isShowingAd.value = true
-						val adShown = adManager.showInterstitialAd {
+						val activity = context as? android.app.Activity
+						val adShown = adManager.showInterstitialAd(activity) {
 							isShowingAd.value = false
 						}
 						if (!adShown) {
