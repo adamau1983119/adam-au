@@ -19,11 +19,23 @@ import com.example.wtsaskingforsignature.ui.chatnew.ChatScreenNew
 import com.example.wtsaskingforsignature.ui.theme.WtsTheme
 import com.example.wtsaskingforsignature.util.WtsLogger
 import com.example.wtsaskingforsignature.ui.components.WtsBackground
+import com.example.wtsaskingforsignature.test.ModuleTestActivity
+import android.content.Intent
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val navigateTarget = intent?.getStringExtra("navigate")
+		
+		// 檢查是否要啟動模組測試
+		if (navigateTarget == "module_test") {
+			WtsLogger.i("MainActivity: 啟動模組測試Activity")
+			val intent = Intent(this, ModuleTestActivity::class.java)
+			startActivity(intent)
+			finish()
+			return
+		}
+		
 		setContent {
 			WtsTheme {
 				Surface {
