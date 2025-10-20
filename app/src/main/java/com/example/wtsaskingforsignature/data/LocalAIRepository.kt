@@ -7,6 +7,9 @@ import com.example.wtsaskingforsignature.data.api.CupResultResponse
 import com.example.wtsaskingforsignature.data.api.DrawResponse
 import com.example.wtsaskingforsignature.util.WtsLogger
 import com.example.wtsaskingforsignature.ziwei.ZiweiAnalysisAdapter
+import com.example.wtsaskingforsignature.ai.DeepSeekInterpreter
+import com.example.wtsaskingforsignature.data.EnhancedModels.*
+import com.example.wtsaskingforsignature.data.EnhancedContext.*
 
 /**
  * 本地AI解签系统
@@ -104,13 +107,99 @@ class LocalAIRepository : Repository {
 	override suspend fun chat(fortuneId: Int, question: String): Result<ChatResponse> {
 		WtsLogger.i("本地AI解签：籤文ID=$fortuneId, 问题=$question")
 		
-		// 检查是否包含紫薇斗数分析请求
-		if (isZiweiAnalysisRequest(question)) {
-			return performZiweiAnalysis(fortuneId, question)
+		// 使用新的DeepSeekInterpreter進行分析
+		return performEnhancedAnalysis(fortuneId, question)
+	}
+	
+	/**
+	 * 使用增強的DeepSeekInterpreter進行分析
+	 */
+	private suspend fun performEnhancedAnalysis(fortuneId: Int, question: String): Result<ChatResponse> {
+		return try {
+			// 創建DeepSeekInterpreter實例
+			val interpreter = DeepSeekInterpreter()
+			
+			// 提取用戶資料（從問題中解析）
+			val userProfile = extractUserProfile(question)
+			val ziweiData = generateZiweiData(userProfile)
+			
+			// 使用增強的解釋器生成回答
+			val response = interpreter.interpretFortune(
+				question = question,
+				userProfile = userProfile,
+				ziweiData = ziweiData,
+				fortuneId = fortuneId
+			)
+			
+			// 轉換為ChatResponse格式
+			val chatResponse = ChatResponse(
+				messages = listOf(
+					ChatMessage(
+						role = "assistant",
+						content = buildString {
+							append(response.coreInterpretation)
+							if (response.timeGuidance.isNotEmpty()) {
+								append("\n\n").append(response.timeGuidance)
+							}
+							if (response.fortuneConnection.isNotEmpty()) {
+								append("\n\n").append(response.fortuneConnection)
+							}
+							if (response.personalizedAdvice.isNotEmpty()) {
+								append("\n\n建議：").append(response.personalizedAdvice.joinToString("；"))
+							}
+						}
+					)
+				)
+			)
+			
+			Result.success(chatResponse)
+			
+		} catch (e: Exception) {
+			WtsLogger.e("Enhanced analysis failed: ${e.message}", e)
+			// 降級到傳統分析
+			performTraditionalAnalysis(fortuneId, question)
 		}
-		
-		// 传统本地AI分析
-		return performTraditionalAnalysis(fortuneId, question)
+	}
+	
+	/**
+	 * 從問題中提取用戶資料
+	 */
+	private fun extractUserProfile(question: String): UserProfile {
+		// 簡化的用戶資料提取（實際應該從用戶輸入中解析）
+		return UserProfile(
+			name = "用戶",
+			age = 30,
+			gender = Gender.MALE,
+			birthDate = "1983-01-19",
+			birthTime = "10:30",
+			birthPlace = "香港"
+		)
+	}
+	
+	/**
+	 * 生成紫微斗數資料
+	 */
+	private fun generateZiweiData(userProfile: UserProfile): ZiweiAnalysis {
+		// 簡化的紫微斗數資料生成（實際應該基於出生資料計算）
+		return ZiweiAnalysis(
+			mingGong = StarAnalysis(
+				mainStar = "天機",
+				secondaryStars = listOf("文昌", "文曲"),
+				siHua = "化科"
+			),
+			careerPalace = PalaceAnalysis(
+				mainStar = "太陽",
+				secondaryStars = listOf("天梁", "左輔"),
+				siHua = "化祿",
+				strength = "強旺"
+			),
+			liuNian = LiuNianAnalysis(
+				year = 2025,
+				careerTrend = "上升",
+				keyMonths = listOf("10月", "11月", "12月"),
+				opportunities = "貴人相助、資源對接"
+			)
+		)
 	}
 	
 	/**

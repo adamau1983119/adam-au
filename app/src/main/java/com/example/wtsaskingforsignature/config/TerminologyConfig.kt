@@ -28,6 +28,26 @@ object TerminologyConfig {
                 meaning = "雲開見日",
                 symbol = "健康狀況改善，身體轉好"
             )
+        ),
+        10 to mapOf(
+            QuestionCategory.CAREER to FortuneMeaning(
+                fortuneId = 10,
+                category = QuestionCategory.CAREER,
+                meaning = "時來運轉",
+                symbol = "工作運勢將有轉機，年底將迎來事業突破"
+            ),
+            QuestionCategory.LOVE to FortuneMeaning(
+                fortuneId = 10,
+                category = QuestionCategory.LOVE,
+                meaning = "時來運轉",
+                symbol = "感情運勢轉好，易遇良緣"
+            ),
+            QuestionCategory.HEALTH to FortuneMeaning(
+                fortuneId = 10,
+                category = QuestionCategory.HEALTH,
+                meaning = "時來運轉",
+                symbol = "健康狀況改善，身體轉好"
+            )
         )
     )
     

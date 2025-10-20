@@ -5,7 +5,7 @@ object ServiceLocator {
 	private val localAIRepository: LocalAIRepository by lazy { LocalAIRepository() }
 
 	// 切換資料來源：0=使用本地AI，1=使用本地資料庫
-	var dataSource: Int = 1 // 預設使用本地資料庫
+	var dataSource: Int = 0 // 使用本地AI（測試新模組）
 
 	val repository: Repository
 		get() = when (dataSource) {
