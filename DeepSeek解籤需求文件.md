@@ -173,6 +173,8 @@ data class PersonalizedResponse(
 ```kotlin
 interface AnalysisModule {
     fun process(context: AnalysisContext): AnalysisResult
+    fun getModuleName(): String
+    fun getVersion(): String
 }
 
 class QuestionAnalyzer : AnalysisModule
@@ -187,7 +189,118 @@ class ToneAdapter : AnalysisModule
 - 清晰的錯誤處理
 - 完整的日誌記錄
 
-### 3. AI Agent系統
+### 3. 模組間協作機制
+**統一資料格式：**
+```kotlin
+data class AnalysisContext(
+    val traceId: String,
+    val question: QuestionAnalysis?,
+    val ziweiData: ZiweiAnalysis?,
+    val response: PersonalizedResponse?,
+    val version: Int = 1,
+    val timestamps: Map<String, Long> = emptyMap(),
+    val source: String = "user_input",
+    val metadata: Map<String, Any> = emptyMap()
+)
+
+data class AnalysisResult(
+    val success: Boolean,
+    val resultCode: String,
+    val data: Any?,
+    val errorMessage: String? = null,
+    val processingTime: Long,
+    val moduleName: String
+)
+```
+
+**中介層設計：**
+- 使用 `AnalysisContext` 作為模組間資料交換容器
+- 每個模組讀寫同一個 Context 對象
+- 資料版本控制避免舊資料覆蓋新結果
+
+### 4. 錯誤處理與降級策略
+**模組級錯誤捕捉：**
+```kotlin
+class ModuleErrorHandler {
+    fun processWithFallback(module: AnalysisModule, context: AnalysisContext): AnalysisResult {
+        return try {
+            module.process(context)
+        } catch (e: Exception) {
+            logError("${module.getModuleName()} failed: ${e.message}")
+            when (module) {
+                is QuestionAnalyzer -> useKeywordMatchingFallback(context)
+                is ZiweiCalculator -> useDefaultZiweiExplanation(context)
+                is ResponseGenerator -> useTemplateFallback(context)
+                else -> createErrorResult(e)
+            }
+        }
+    }
+}
+```
+
+**降級策略：**
+- NLP模組失敗 → 關鍵字比對備援
+- 命盤模組失敗 → 預設解釋語句
+- 回答生成失敗 → 模板填空
+- 級別化錯誤處理（可重試/不可重試/資料問題）
+
+### 5. 性能優化策略
+**並行處理：**
+```kotlin
+class ParallelProcessor {
+    suspend fun processAsync(context: AnalysisContext): AnalysisResult {
+        val nlpDeferred = async { nlpModule.process(context) }
+        val ziweiDeferred = async { ziweiModule.process(context) }
+        
+        val nlpResult = nlpDeferred.await()
+        val ziweiResult = ziweiDeferred.await()
+        
+        return responseModule.process(combineResults(nlpResult, ziweiResult))
+    }
+}
+```
+
+**快取機制：**
+- 按 userId + birth + year 哈希快取命盤結果
+- 重複問題快取回答結果
+- 模型暖機機制
+
+**性能目標：**
+- NLP分析 < 800ms（超時則用簡化路徑）
+- 回覆生成 < 2秒
+- 整體響應 < 3秒
+
+### 6. 數據一致性保證
+**資料校驗規則：**
+```kotlin
+class ContextValidator {
+    fun validateContext(context: AnalysisContext): ValidationResult {
+        val errors = mutableListOf<String>()
+        
+        // 業務一致性檢查
+        if (context.question?.category == QuestionCategory.CAREER) {
+            if (context.ziweiData?.careerPalace == null) {
+                errors.add("事業問題必須包含官祿宮分析")
+            }
+        }
+        
+        if (context.question?.intent == QuestionIntent.PREDICTION) {
+            if (context.ziweiData?.liuNian == null) {
+                errors.add("預測意圖必須包含流年分析")
+            }
+        }
+        
+        return ValidationResult(errors.isEmpty(), errors)
+    }
+}
+```
+
+**版本控制：**
+- 每次分析結果附加版本號
+- 版本衝突時採用保守合併策略
+- 保留差異到 metadata 供後續分析
+
+### 7. AI Agent系統
 **Agent設計：**
 ```kotlin
 class IntelligentFortuneAgent {
@@ -210,12 +323,98 @@ class IntelligentFortuneAgent {
 }
 ```
 
-### 4. 數據安全與隱私
+### 8. 可觀測性與質量保證
+**監控指標：**
+```kotlin
+class QualityMetrics {
+    fun calculateQualityScore(response: PersonalizedResponse): QualityScore {
+        return QualityScore(
+            relevance = calculateRelevance(response),
+            actionability = calculateActionability(response),
+            personalization = calculatePersonalization(response),
+            tone = calculateToneScore(response)
+        )
+    }
+    
+    fun shouldUseFallback(score: QualityScore): Boolean {
+        return score.overall < 0.6f
+    }
+}
+```
+
+**指標上報：**
+- 模組失敗率（failure rate）
+- 降級使用率（fallback rate）
+- 響應時間分佈（p95 latency）
+- 質量評分分佈
+- 用戶滿意度趨勢
+
+**灰度開關：**
+```kotlin
+class FeatureToggle {
+    fun isModuleEnabled(moduleName: String): Boolean {
+        return config.getBoolean("modules.$moduleName.enabled", true)
+    }
+    
+    fun getFallbackStrategy(moduleName: String): FallbackStrategy {
+        return when (moduleName) {
+            "nlp" -> FallbackStrategy.KEYWORD_MATCHING
+            "ziwei" -> FallbackStrategy.DEFAULT_EXPLANATION
+            "response" -> FallbackStrategy.TEMPLATE_FILL
+            else -> FallbackStrategy.ERROR_RESPONSE
+        }
+    }
+}
+```
+
+### 9. 配置驅動與熱更新
+**配置結構：**
+```kotlin
+data class SystemConfig(
+    val modules: Map<String, ModuleConfig>,
+    val performance: PerformanceConfig,
+    val quality: QualityConfig,
+    val fallback: FallbackConfig
+)
+
+data class ModuleConfig(
+    val enabled: Boolean,
+    val timeout: Long,
+    val retryCount: Int,
+    val fallbackStrategy: String
+)
+```
+
+**熱更新機制：**
+- 配置變更自動生效（無需重啟）
+- 支援 A/B 測試配置
+- 配置變更審計日誌
+- 回滾機制
+
+### 10. 數據安全與隱私
 **安全措施：**
 - 本地數據加密存儲
 - 匿名化處理機制
 - 最小化數據收集
 - 透明化隱私政策
+
+**隱私保護：**
+```kotlin
+class PrivacyManager {
+    fun anonymizeUserData(data: UserData): AnonymizedData {
+        return AnonymizedData(
+            userId = hashUserId(data.userId),
+            birthInfo = anonymizeBirthInfo(data.birthInfo),
+            question = sanitizeQuestion(data.question)
+        )
+    }
+    
+    fun shouldRetainData(interaction: UserInteraction): Boolean {
+        return interaction.qualityScore > 0.7f && 
+               interaction.userConsent == true
+    }
+}
+```
 
 ## 📊 性能指標
 
@@ -227,6 +426,8 @@ class IntelligentFortuneAgent {
 
 ### 2. 性能指標
 - 系統響應時間：< 3秒
+- NLP分析時間：< 800ms
+- 回覆生成時間：< 2秒
 - 內存使用：< 50MB
 - 電池消耗：最小化
 - 網絡使用：最小化
@@ -236,6 +437,19 @@ class IntelligentFortuneAgent {
 - 個性化程度：> 80%
 - 實用性評分：> 4.0/5.0
 - 文化適配度：> 85%
+- 整體質量評分：> 0.6
+
+### 4. 可靠性指標
+- 模組成功率：> 95%
+- 降級使用率：< 10%
+- 錯誤恢復時間：< 1秒
+- 系統可用性：> 99.5%
+
+### 5. 可觀測性指標
+- 響應時間 P95：< 3秒
+- 響應時間 P99：< 5秒
+- 錯誤率：< 1%
+- 質量評分分佈：正態分佈
 
 ## 🚀 實施計劃
 
@@ -246,25 +460,31 @@ class IntelligentFortuneAgent {
 - 完善紫微斗數計算
 - 建立基礎回答模板
 - 實現個人化調整
+- 建立模組間協作機制
+- 實現基礎錯誤處理
 
 **交付物：**
 - 問題分類器
 - 命盤計算模組
 - 模板回答系統
+- 模組協作框架
 - 基礎測試版本
 
 ### 階段二：智能優化（2-3個月）
-**目標：** 增加智能元素
+**目標：** 增加智能元素和可靠性
 **任務：**
 - 導入NLP語意分析
 - 實現動態回答生成
 - 建立語氣適配系統
+- 實現並行處理和快取
+- 建立降級策略
 - 收集用戶反饋
 
 **交付物：**
 - NLP分析模組
 - 動態回答生成器
 - 語氣適配系統
+- 性能優化系統
 - 反饋收集機制
 
 ### 階段三：智能化升級（3-6個月）
@@ -273,51 +493,108 @@ class IntelligentFortuneAgent {
 - 實現智能決策邏輯
 - 建立持續學習機制
 - 優化回答質量
+- 實現可觀測性監控
+- 建立配置驅動機制
 - 擴展功能模組
 
 **交付物：**
 - 智能Agent系統
 - 持續學習機制
 - 質量控制系統
+- 監控和告警系統
+- 配置管理系統
 - 完整功能版本
+
+### 階段四：生產優化（6-12個月）
+**目標：** 生產環境優化和持續改進
+**任務：**
+- 性能調優和擴展
+- 安全加固和合規
+- 用戶體驗優化
+- 數據分析和洞察
+- 功能迭代和擴展
+
+**交付物：**
+- 生產級系統
+- 安全合規報告
+- 用戶體驗報告
+- 數據分析儀表板
+- 持續改進機制
 
 ## ⚠️ 風險控制
 
 ### 1. 技術風險
 **風險：** 架構複雜度過高
-**對策：** 漸進式開發，模組化設計
+**對策：** 漸進式開發，模組化設計，配置驅動
 
 ### 2. 用戶體驗風險
 **風險：** 功能複雜影響使用
-**對策：** 保持界面簡潔，隱藏複雜邏輯
+**對策：** 保持界面簡潔，隱藏複雜邏輯，提供降級體驗
 
 ### 3. 隱私安全風險
 **風險：** 用戶數據洩露
-**對策：** 本地化處理，加密存儲
+**對策：** 本地化處理，加密存儲，匿名化機制
 
 ### 4. 維護成本風險
 **風險：** 系統難以維護
-**對策：** 模組化設計，降低耦合度
+**對策：** 模組化設計，降低耦合度，自動化監控
+
+### 5. 性能風險
+**風險：** 響應時間過長
+**對策：** 並行處理，快取機制，超時降級
+
+### 6. 可靠性風險
+**風險：** 模組故障影響整體
+**對策：** 降級策略，錯誤隔離，灰度開關
+
+### 7. 數據一致性風險
+**風險：** 模組間數據不同步
+**對策：** 統一Context，版本控制，校驗機制
+
+### 8. 學習風險
+**風險：** 學習機制引入錯誤模式
+**對策：** 質量控制，人工審核，回滾機制
 
 ## 📝 驗收標準
 
 ### 功能驗收
-- [ ] 問題分類準確率達標
-- [ ] 回答質量評分達標
+- [ ] 問題分類準確率達標（>90%）
+- [ ] 回答質量評分達標（>4.0/5.0）
 - [ ] 個人化功能正常
-- [ ] 系統穩定性達標
+- [ ] 模組間協作正常
+- [ ] 降級策略有效
 
 ### 性能驗收
-- [ ] 響應時間達標
-- [ ] 內存使用達標
+- [ ] 響應時間達標（<3秒）
+- [ ] NLP分析時間達標（<800ms）
+- [ ] 內存使用達標（<50MB）
 - [ ] 電池消耗達標
 - [ ] 網絡使用達標
+
+### 可靠性驗收
+- [ ] 模組成功率達標（>95%）
+- [ ] 降級使用率達標（<10%）
+- [ ] 錯誤恢復時間達標（<1秒）
+- [ ] 系統可用性達標（>99.5%）
 
 ### 安全驗收
 - [ ] 數據加密正常
 - [ ] 隱私保護達標
+- [ ] 匿名化機制正常
 - [ ] 安全檢測通過
 - [ ] 合規性檢查通過
+
+### 可觀測性驗收
+- [ ] 監控指標正常
+- [ ] 告警機制有效
+- [ ] 日誌記錄完整
+- [ ] 質量評分正常
+
+### 配置管理驗收
+- [ ] 熱更新功能正常
+- [ ] 灰度開關有效
+- [ ] 配置回滾正常
+- [ ] A/B測試功能正常
 
 ## 🔗 相關文件
 
