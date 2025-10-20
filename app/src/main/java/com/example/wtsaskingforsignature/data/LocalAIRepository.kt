@@ -111,58 +111,163 @@ class LocalAIRepository : Repository {
 		return performEnhancedAnalysis(fortuneId, question)
 	}
 	
+    /**
+     * 使用真正執行的DeepSeekInterpreter進行分析
+     */
+    private suspend fun performEnhancedAnalysis(fortuneId: Int, question: String): Result<ChatResponse> {
+        return try {
+            WtsLogger.i("LocalAIRepository: 開始增強分析 - 籤文ID=$fortuneId, 問題=$question")
+            
+            // 創建DeepSeekInterpreter實例
+            val interpreter = DeepSeekInterpreter()
+
+            // 從問題中提取真實用戶資料
+            val userProfile = extractRealUserProfile(question)
+            WtsLogger.i("提取用戶資料: ${userProfile.name}, ${userProfile.birthDate}")
+
+            // 使用真實的紫微斗數計算（將在模組中執行）
+            val ziweiData = createInitialZiweiData(userProfile)
+
+            // 使用真正執行的解釋器生成回答
+            val response = interpreter.interpretFortune(
+                question = question,
+                userProfile = userProfile,
+                ziweiData = ziweiData,
+                fortuneId = fortuneId
+            )
+
+            // 轉換為ChatResponse格式
+            val chatResponse = ChatResponse(
+                messages = listOf(
+                    ChatMessage(
+                        role = "assistant",
+                        content = buildString {
+                            append(response.coreInterpretation)
+                            if (response.timeGuidance.isNotEmpty()) {
+                                append("\n\n").append(response.timeGuidance)
+                            }
+                            if (response.fortuneConnection.isNotEmpty()) {
+                                append("\n\n").append(response.fortuneConnection)
+                            }
+                            if (response.personalizedAdvice.isNotEmpty()) {
+                                append("\n\n建議：").append(response.personalizedAdvice.joinToString("；"))
+                            }
+                        }
+                    )
+                )
+            )
+
+            WtsLogger.i("LocalAIRepository: 增強分析完成")
+            Result.success(chatResponse)
+
+        } catch (e: Exception) {
+            WtsLogger.e("Enhanced analysis failed: ${e.message}", e)
+            // 降級到傳統分析
+            performTraditionalAnalysis(fortuneId, question)
+        }
+    }
+	
 	/**
-	 * 使用增強的DeepSeekInterpreter進行分析
+	 * 從問題中提取真實用戶資料
 	 */
-	private suspend fun performEnhancedAnalysis(fortuneId: Int, question: String): Result<ChatResponse> {
-		return try {
-			// 創建DeepSeekInterpreter實例
-			val interpreter = DeepSeekInterpreter()
-			
-			// 提取用戶資料（從問題中解析）
-			val userProfile = extractUserProfile(question)
-			val ziweiData = generateZiweiData(userProfile)
-			
-			// 使用增強的解釋器生成回答
-			val response = interpreter.interpretFortune(
-				question = question,
-				userProfile = userProfile,
-				ziweiData = ziweiData,
-				fortuneId = fortuneId
-			)
-			
-			// 轉換為ChatResponse格式
-			val chatResponse = ChatResponse(
-				messages = listOf(
-					ChatMessage(
-						role = "assistant",
-						content = buildString {
-							append(response.coreInterpretation)
-							if (response.timeGuidance.isNotEmpty()) {
-								append("\n\n").append(response.timeGuidance)
-							}
-							if (response.fortuneConnection.isNotEmpty()) {
-								append("\n\n").append(response.fortuneConnection)
-							}
-							if (response.personalizedAdvice.isNotEmpty()) {
-								append("\n\n建議：").append(response.personalizedAdvice.joinToString("；"))
-							}
-						}
-					)
-				)
-			)
-			
-			Result.success(chatResponse)
-			
-		} catch (e: Exception) {
-			WtsLogger.e("Enhanced analysis failed: ${e.message}", e)
-			// 降級到傳統分析
-			performTraditionalAnalysis(fortuneId, question)
+	private fun extractRealUserProfile(question: String): UserProfile {
+		// 從問題中解析真實的用戶資料
+		val name = extractNameFromQuestion(question)
+		val birthDate = extractBirthDateFromQuestion(question)
+		val birthTime = extractBirthTimeFromQuestion(question)
+		val birthPlace = extractBirthPlaceFromQuestion(question)
+		val age = calculateAge(birthDate)
+		val gender = extractGenderFromQuestion(question)
+		
+		return UserProfile(
+			name = name,
+			age = age,
+			gender = gender,
+			birthDate = birthDate,
+			birthTime = birthTime,
+			birthPlace = birthPlace
+		)
+	}
+	
+	/**
+	 * 從問題中提取姓名
+	 */
+	private fun extractNameFromQuestion(question: String): String {
+		// 簡單的姓名提取邏輯
+		val namePattern = Regex("([歐蘇王李陳黃張劉吳周徐孫馬朱胡郭何高林羅鄭梁謝宋唐許韓馮鄧曹彭曾蕭田董袁潘於蔣蔡余杜葉程魏蘇呂丁任沈姚盧姜崔鍾譚陸汪范金石廖賈夏韋付方白鄒孟熊秦邱江尹薛閆段雷侯龍史陶黎賀顧毛郝龔邵萬錢嚴覃武戴莫孔向湯]\\w{1,2})")
+		val match = namePattern.find(question)
+		return match?.value ?: "用戶"
+	}
+	
+	/**
+	 * 從問題中提取出生日期
+	 */
+	private fun extractBirthDateFromQuestion(question: String): String {
+		val datePattern = Regex("(\\d{4})[-/年](\\d{1,2})[-/月](\\d{1,2})")
+		val match = datePattern.find(question)
+		
+		return if (match != null) {
+			val (year, month, day) = match.destructured
+			"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}"
+		} else {
+			"1990-01-01" // 預設日期
 		}
 	}
 	
 	/**
-	 * 從問題中提取用戶資料
+	 * 從問題中提取出生時間
+	 */
+	private fun extractBirthTimeFromQuestion(question: String): String {
+		val timePattern = Regex("(\\d{1,2}):(\\d{2})")
+		val match = timePattern.find(question)
+		
+		return if (match != null) {
+			val (hour, minute) = match.destructured
+			"${hour.padStart(2, '0')}:${minute.padStart(2, '0')}"
+		} else {
+			"12:00" // 預設時間
+		}
+	}
+	
+	/**
+	 * 從問題中提取出生地點
+	 */
+	private fun extractBirthPlaceFromQuestion(question: String): String {
+		val places = listOf("香港", "台灣", "大陸", "澳門", "新加坡", "馬來西亞")
+		for (place in places) {
+			if (question.contains(place)) {
+				return place
+			}
+		}
+		return "香港" // 預設地點
+	}
+	
+	/**
+	 * 計算年齡
+	 */
+	private fun calculateAge(birthDate: String): Int {
+		return try {
+			val year = birthDate.substring(0, 4).toInt()
+			val currentYear = java.time.LocalDate.now().year
+			currentYear - year
+		} catch (e: Exception) {
+			30 // 預設年齡
+		}
+	}
+	
+	/**
+	 * 從問題中提取性別
+	 */
+	private fun extractGenderFromQuestion(question: String): Gender {
+		return when {
+			question.contains("男") || question.contains("先生") -> Gender.MALE
+			question.contains("女") || question.contains("小姐") -> Gender.FEMALE
+			else -> Gender.UNKNOWN
+		}
+	}
+	
+	/**
+	 * 從問題中提取用戶資料（保留舊函數以兼容）
 	 */
 	private fun extractUserProfile(question: String): UserProfile {
 		// 簡化的用戶資料提取（實際應該從用戶輸入中解析）

@@ -1,157 +1,124 @@
-// 整合的DeepSeek解籤器
+package com.example.wtsaskingforsignature.ai
+
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisContext
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisResult
+import com.example.wtsaskingforsignature.data.EnhancedContext.PersonalizedResponse
+import com.example.wtsaskingforsignature.data.EnhancedModels.ZiweiAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.UserProfile
+import com.example.wtsaskingforsignature.data.EnhancedModels.FortuneMeaning
+import com.example.wtsaskingforsignature.data.EnhancedModels.MonthlyAnalysis
+import com.example.wtsaskingforsignature.modules.EnhancedResponseGenerator
+import com.example.wtsaskingforsignature.modules.EnhancedZiweiSemanticMapper
+import com.example.wtsaskingforsignature.modules.QuestionAnalyzer
+import com.example.wtsaskingforsignature.modules.TimeWindowAnalyzer
+import com.example.wtsaskingforsignature.modules.FortuneDataIntegrator
+import com.example.wtsaskingforsignature.modules.ZiweiCalculatorIntegrator
+import com.example.wtsaskingforsignature.util.WtsLogger
+
+/**
+ * 真正執行模組的DeepSeek解籤器
+ * 整合App內現有功能，實際執行所有模組
+ */
 class DeepSeekInterpreter {
+
+    // 真正的模組實例
     private val questionAnalyzer = QuestionAnalyzer()
-    private val ziweiMapper = QuestionToZiweiMapper()
+    private val fortuneDataIntegrator = FortuneDataIntegrator()
+    private val ziweiCalculatorIntegrator = ZiweiCalculatorIntegrator()
     private val timeWindowAnalyzer = TimeWindowAnalyzer()
-    private val semanticMapper = EnhancedZiweiSemanticMapper()
+    private val ziweiSemanticMapper = EnhancedZiweiSemanticMapper()
     private val responseGenerator = EnhancedResponseGenerator()
-    private val errorHandler = ModuleErrorHandler()
-    
+
     suspend fun interpretFortune(
         question: String,
         userProfile: UserProfile,
         ziweiData: ZiweiAnalysis,
         fortuneId: Int
     ): PersonalizedResponse {
-        val traceId = generateTraceId()
-        var context = EnhancedAnalysisContext(
-            traceId = traceId,
-            question = null,
+        WtsLogger.i("DeepSeekInterpreter: 開始解籤 - 問題=$question, 籤文ID=$fortuneId")
+        
+        var context = AnalysisContext(
+            userProfile = userProfile,
             ziweiData = ziweiData,
-            response = null,
-            monthlyAnalysis = null,
-            semanticExplanation = null,
-            fortuneIntegration = null,
             fortuneId = fortuneId,
-            userProfile = userProfile
+            metadata = mutableMapOf("rawQuestion" to question)
         )
-        
+
         try {
-            // 1. 問題分析
-            context = processQuestionAnalysis(context, question)
-            
-            // 2. 命盤映射
-            context = processZiweiMapping(context)
-            
-            // 3. 時間分析
-            context = processTimeAnalysis(context)
-            
-            // 4. 語意生成
-            context = processSemanticMapping(context)
-            
-            // 5. 回答生成
-            val result = responseGenerator.process(context)
-            
-            return if (result.success) {
-                result.data as PersonalizedResponse
-            } else {
-                createFallbackResponse(context)
+            // Step 1: 真正的問題分析
+            WtsLogger.i("Step 1: 執行問題分析模組")
+            val questionAnalysisResult = questionAnalyzer.process(context)
+            if (!questionAnalysisResult.success) {
+                WtsLogger.e("問題分析失敗: ${questionAnalysisResult.errorMessage}")
+                return createFallbackResponse("問題分析失敗")
             }
-            
+            context = context.copy(question = questionAnalysisResult.data as? com.example.wtsaskingforsignature.data.EnhancedContext.QuestionAnalysis)
+
+            // Step 2: 真正的籤文資料整合
+            WtsLogger.i("Step 2: 執行籤文資料整合模組")
+            val fortuneDataResult = fortuneDataIntegrator.process(context)
+            if (!fortuneDataResult.success) {
+                WtsLogger.e("籤文資料整合失敗: ${fortuneDataResult.errorMessage}")
+                return createFallbackResponse("籤文資料整合失敗")
+            }
+            val fortuneMeaning = fortuneDataResult.data as? FortuneMeaning
+            context = context.copy(metadata = context.metadata.apply { put("fortuneMeaning", fortuneMeaning) })
+
+            // Step 3: 真正的紫微斗數計算
+            WtsLogger.i("Step 3: 執行紫微斗數計算模組")
+            val ziweiCalculationResult = ziweiCalculatorIntegrator.process(context)
+            if (!ziweiCalculationResult.success) {
+                WtsLogger.e("紫微斗數計算失敗: ${ziweiCalculationResult.errorMessage}")
+                return createFallbackResponse("紫微斗數計算失敗")
+            }
+            context = context.copy(ziweiData = ziweiCalculationResult.data as? ZiweiAnalysis)
+
+            // Step 4: 真正的時間分析
+            WtsLogger.i("Step 4: 執行時間分析模組")
+            val timeAnalysisResult = timeWindowAnalyzer.process(context)
+            if (timeAnalysisResult.success) {
+                context = context.copy(monthlyAnalysis = timeAnalysisResult.data as? MonthlyAnalysis)
+            } else {
+                WtsLogger.w("時間分析跳過或失敗: ${timeAnalysisResult.errorMessage}")
+            }
+
+            // Step 5: 真正的語意映射
+            WtsLogger.i("Step 5: 執行語意映射模組")
+            val semanticResult = ziweiSemanticMapper.process(context)
+            if (!semanticResult.success) {
+                WtsLogger.e("語意映射失敗: ${semanticResult.errorMessage}")
+                return createFallbackResponse("語意映射失敗")
+            }
+            context = context.copy(fortuneConnection = semanticResult.data as? String)
+
+            // Step 6: 真正的回答生成
+            WtsLogger.i("Step 6: 執行回答生成模組")
+            val finalResponseResult = responseGenerator.process(context)
+            if (!finalResponseResult.success) {
+                WtsLogger.e("回答生成失敗: ${finalResponseResult.errorMessage}")
+                return createFallbackResponse("回答生成失敗")
+            }
+
+            val response = finalResponseResult.data as PersonalizedResponse
+            WtsLogger.i("DeepSeekInterpreter: 解籤完成 - 回答長度=${response.coreInterpretation.length}")
+            return response
+
         } catch (e: Exception) {
-            WtsLogger.e("DeepSeekInterpreter failed: ${e.message}", e)
-            return createFallbackResponse(context)
+            WtsLogger.e("DeepSeekInterpreter 執行失敗: ${e.message}", e)
+            return createFallbackResponse("系統執行失敗: ${e.message}")
         }
     }
-    
-    private suspend fun processQuestionAnalysis(
-        context: EnhancedAnalysisContext,
-        question: String
-    ): EnhancedAnalysisContext {
-        val questionAnalysis = QuestionAnalysis(
-            category = analyzeQuestionCategory(question),
-            intent = analyzeQuestionIntent(question),
-            timeRange = extractTimeRange(question),
-            emotion = SentimentScore.NEUTRAL,
-            urgency = UrgencyLevel.MEDIUM
-        )
-        
-        return context.copy(question = questionAnalysis)
-    }
-    
-    private suspend fun processZiweiMapping(context: EnhancedAnalysisContext): EnhancedAnalysisContext {
-        // 基於問題類型觸發對應的命盤分析
-        return context
-    }
-    
-    private suspend fun processTimeAnalysis(context: EnhancedAnalysisContext): EnhancedAnalysisContext {
-        val result = timeWindowAnalyzer.process(context)
-        val monthlyAnalysis = if (result.success) {
-            result.data as? MonthlyAnalysis
-        } else {
-            null
-        }
-        
-        return context.copy(monthlyAnalysis = monthlyAnalysis)
-    }
-    
-    private suspend fun processSemanticMapping(context: EnhancedAnalysisContext): EnhancedAnalysisContext {
-        val result = semanticMapper.process(context)
-        val semanticExplanation = if (result.success) {
-            result.data as? String
-        } else {
-            null
-        }
-        
-        val fortuneIntegration = generateFortuneIntegration(context)
-        
-        return context.copy(
-            semanticExplanation = semanticExplanation,
-            fortuneIntegration = fortuneIntegration
-        )
-    }
-    
-    private fun generateFortuneIntegration(context: EnhancedAnalysisContext): String {
-        val fortuneId = context.fortuneId ?: return ""
-        val category = context.question?.category ?: return ""
-        
-        val fortuneMeaning = TerminologyConfig.fortuneMeanings[fortuneId]?.get(category)
-        return fortuneMeaning?.let { meaning ->
-            "黃大仙第${fortuneId}籤寓意「${meaning.meaning}」，象徵${meaning.symbol}"
-        } ?: ""
-    }
-    
-    private fun createFallbackResponse(context: EnhancedAnalysisContext): PersonalizedResponse {
+
+    private fun createFallbackResponse(errorMessage: String): PersonalizedResponse {
         return PersonalizedResponse(
-            coreInterpretation = "根據您的命盤分析，整體運勢平穩",
-            ziweiConnection = "命盤顯示運勢良好",
-            personalizedAdvice = listOf("保持積極態度，把握機會"),
-            timeGuidance = "穩步發展，把握時機",
-            fortuneConnection = "籤文顯示運勢向好",
-            precautions = listOf("保持理性思考"),
-            tone = ResponseTone.PROFESSIONAL,
-            confidence = 0.6f,
-            professionalLevel = 0.7f
+            coreInterpretation = "很抱歉，目前無法提供詳細解讀。$errorMessage",
+            ziweiConnection = "",
+            personalizedAdvice = listOf("請稍後再試或嘗試其他問題。"),
+            timeGuidance = "",
+            fortuneConnection = "",
+            precautions = emptyList(),
+            tone = com.example.wtsaskingforsignature.data.EnhancedContext.ResponseTone.GENTLE,
+            confidence = 0.1f
         )
-    }
-    
-    private fun generateTraceId(): String {
-        return "trace_${System.currentTimeMillis()}_${(1000..9999).random()}"
-    }
-    
-    // 輔助方法
-    private fun analyzeQuestionCategory(question: String): QuestionCategory {
-        return when {
-            question.contains("事業") || question.contains("工作") || question.contains("職場") -> QuestionCategory.CAREER
-            question.contains("感情") || question.contains("婚姻") || question.contains("愛情") -> QuestionCategory.LOVE
-            question.contains("健康") || question.contains("身體") || question.contains("疾病") -> QuestionCategory.HEALTH
-            question.contains("財運") || question.contains("金錢") || question.contains("投資") -> QuestionCategory.WEALTH
-            else -> QuestionCategory.GENERAL
-        }
-    }
-    
-    private fun analyzeQuestionIntent(question: String): QuestionIntent {
-        return when {
-            question.contains("如何") || question.contains("怎樣") -> QuestionIntent.ADVICE
-            question.contains("預測") || question.contains("未來") -> QuestionIntent.PREDICTION
-            question.contains("注意") || question.contains("小心") -> QuestionIntent.WARNING
-            else -> QuestionIntent.ADVICE
-        }
-    }
-    
-    private fun extractTimeRange(question: String): String {
-        val timePattern = Regex("(\\d{4}年)?(\\d{1,2}[-至]\\d{1,2}月|年底|明年|今年)")
-        val match = timePattern.find(question)
-        return match?.value ?: ""
     }
 }
