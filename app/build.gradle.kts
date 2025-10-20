@@ -12,10 +12,26 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 19
-        versionName = "19"
+        versionName = "1.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        
+        // 版本資訊
+        buildConfigField("String", "VERSION_NAME", "\"1.1.3\"")
+        buildConfigField("int", "VERSION_CODE", "19")
+        buildConfigField("String", "BUILD_DATE", "\"${getBuildDate()}\"")
+        buildConfigField("String", "BUILD_TYPE", "\"release\"")
+    }
+
+    // 定義簽章設定需在 buildTypes 之前
+    signingConfigs {
+        create("release") {
+            storeFile = file("wts-release-key.keystore")
+            storePassword = "123456"
+            keyAlias = "wts-key"
+            keyPassword = "123456"
+        }
     }
 
     buildTypes {
@@ -26,7 +42,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // 暫時移除簽名配置，使用 debug 簽名
+            signingConfig = signingConfigs.getByName("release")
             // 確保版本一致性
             buildConfigField("String", "BUILD_TYPE", "\"release\"")
             buildConfigField("String", "API_BASE_URL", "\"https://api.deepseek.com/\"")
