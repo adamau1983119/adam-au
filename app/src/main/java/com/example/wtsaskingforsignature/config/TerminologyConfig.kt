@@ -53,23 +53,23 @@ object TerminologyConfig {
             QuestionCategory.CAREER to FortuneMeaning(
                 fortuneId = 40,
                 category = QuestionCategory.CAREER,
-                meaning = "守正待時，厚積薄發",
-                symbol = "雖有波折，但堅持本業可見成果",
-                content = "蘇武牧羊北海邊，雪中送炭見真情，十九年來心不變，終得回朝見君王"
+                meaning = "伯才碎琴",
+                symbol = "失友失物、才華無人賞識、百事不利",
+                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方"
             ),
             QuestionCategory.LOVE to FortuneMeaning(
                 fortuneId = 40,
                 category = QuestionCategory.LOVE,
-                meaning = "守正待時，厚積薄發",
-                symbol = "感情需要時間培養，穩重發展",
-                content = "蘇武牧羊北海邊，雪中送炭見真情，十九年來心不變，終得回朝見君王"
+                meaning = "伯才碎琴",
+                symbol = "感情中需要調整心態，不要被悲傷影響",
+                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方"
             ),
             QuestionCategory.HEALTH to FortuneMeaning(
                 fortuneId = 40,
                 category = QuestionCategory.HEALTH,
-                meaning = "守正待時，厚積薄發",
-                symbol = "健康狀況穩定，注意保養",
-                content = "蘇武牧羊北海邊，雪中送炭見真情，十九年來心不變，終得回朝見君王"
+                meaning = "伯才碎琴",
+                symbol = "身體狀況一般，注意保持規律作息",
+                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方"
             )
         )
     )
