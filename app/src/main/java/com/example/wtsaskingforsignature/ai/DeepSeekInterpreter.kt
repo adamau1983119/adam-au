@@ -35,8 +35,8 @@ class DeepSeekInterpreter {
         ziweiData: ZiweiAnalysis,
         fortuneId: Int
     ): PersonalizedResponse {
-        WtsLogger.i("DeepSeekInterpreter: 開始解籤 - 問題=$question, 籤文ID=$fortuneId")
-        
+        WtsLogger.i("DeepSeekExecution: 開始解籤 - 問題=$question, 籤文ID=$fortuneId")
+
         var context = AnalysisContext(
             userProfile = userProfile,
             ziweiData = ziweiData,
@@ -46,65 +46,98 @@ class DeepSeekInterpreter {
 
         try {
             // Step 1: 真正的問題分析
-            WtsLogger.i("Step 1: 執行問題分析模組")
-            val questionAnalysisResult = questionAnalyzer.process(context)
+            WtsLogger.i("DeepSeekExecution: Step 1 問題分析模組執行")
+            val questionAnalysisResult = try { questionAnalyzer.process(context) } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: 問題分析異常: ${e.message}", e)
+                return createFallbackResponse("問題分析失敗")
+            }
             if (!questionAnalysisResult.success) {
-                WtsLogger.e("問題分析失敗: ${questionAnalysisResult.errorMessage}")
+                WtsLogger.e("DeepSeekExecution: 問題分析失敗: ${questionAnalysisResult.errorMessage}")
                 return createFallbackResponse("問題分析失敗")
             }
             context = context.copy(question = questionAnalysisResult.data as? com.example.wtsaskingforsignature.data.EnhancedContext.QuestionAnalysis)
+            WtsLogger.d("DeepSeekExecution: 問題分析完成 -> ${context.question}")
 
             // Step 2: 真正的籤文資料整合
-            WtsLogger.i("Step 2: 執行籤文資料整合模組")
-            val fortuneDataResult = fortuneDataIntegrator.process(context)
+            WtsLogger.i("DeepSeekExecution: Step 2 籤文資料整合模組執行")
+            val fortuneDataResult = try { fortuneDataIntegrator.process(context) } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: 籤文資料整合異常: ${e.message}", e)
+                return createFallbackResponse("籤文資料整合失敗")
+            }
             if (!fortuneDataResult.success) {
-                WtsLogger.e("籤文資料整合失敗: ${fortuneDataResult.errorMessage}")
+                WtsLogger.e("DeepSeekExecution: 籤文資料整合失敗: ${fortuneDataResult.errorMessage}")
                 return createFallbackResponse("籤文資料整合失敗")
             }
             val fortuneMeaning = fortuneDataResult.data as? FortuneMeaning
             context = context.copy(metadata = context.metadata.apply { put("fortuneMeaning", fortuneMeaning) })
+            WtsLogger.d("DeepSeekExecution: 籤文整合完成 -> ${fortuneDataResult.metadata}")
 
             // Step 3: 真正的紫微斗數計算
-            WtsLogger.i("Step 3: 執行紫微斗數計算模組")
-            val ziweiCalculationResult = ziweiCalculatorIntegrator.process(context)
+            WtsLogger.i("DeepSeekExecution: Step 3 紫微斗數計算模組執行")
+            val ziweiCalculationResult = try { ziweiCalculatorIntegrator.process(context) } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: 紫微斗數計算異常: ${e.message}", e)
+                return createFallbackResponse("紫微斗數計算失敗")
+            }
             if (!ziweiCalculationResult.success) {
-                WtsLogger.e("紫微斗數計算失敗: ${ziweiCalculationResult.errorMessage}")
+                WtsLogger.e("DeepSeekExecution: 紫微斗數計算失敗: ${ziweiCalculationResult.errorMessage}")
                 return createFallbackResponse("紫微斗數計算失敗")
             }
             context = context.copy(ziweiData = ziweiCalculationResult.data as? ZiweiAnalysis)
+            WtsLogger.d("DeepSeekExecution: 紫微斗數計算完成 -> ${context.ziweiData}")
 
             // Step 4: 真正的時間分析
-            WtsLogger.i("Step 4: 執行時間分析模組")
-            val timeAnalysisResult = timeWindowAnalyzer.process(context)
-            if (timeAnalysisResult.success) {
-                context = context.copy(monthlyAnalysis = timeAnalysisResult.data as? MonthlyAnalysis)
-            } else {
-                WtsLogger.w("時間分析跳過或失敗: ${timeAnalysisResult.errorMessage}")
+            WtsLogger.i("DeepSeekExecution: Step 4 時間分析模組執行")
+            val timeAnalysisResult = try { timeWindowAnalyzer.process(context) } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: 時間分析異常: ${e.message}", e)
+                null
+            }
+            if (timeAnalysisResult != null) {
+                if (timeAnalysisResult.success) {
+                    context = context.copy(monthlyAnalysis = timeAnalysisResult.data as? MonthlyAnalysis)
+                    WtsLogger.d("DeepSeekExecution: 時間分析完成 -> ${context.monthlyAnalysis}")
+                } else {
+                    WtsLogger.w("DeepSeekExecution: 時間分析跳過/失敗: ${timeAnalysisResult.errorMessage}")
+                }
             }
 
             // Step 5: 真正的語意映射
-            WtsLogger.i("Step 5: 執行語意映射模組")
-            val semanticResult = ziweiSemanticMapper.process(context)
-            if (!semanticResult.success) {
-                WtsLogger.e("語意映射失敗: ${semanticResult.errorMessage}")
+            WtsLogger.i("DeepSeekExecution: Step 5 語意映射模組執行")
+            val semanticResult = try { ziweiSemanticMapper.process(context) } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: 語意映射異常: ${e.message}", e)
                 return createFallbackResponse("語意映射失敗")
             }
-            context = context.copy(fortuneConnection = semanticResult.data as? String)
+            if (!semanticResult.success) {
+                WtsLogger.e("DeepSeekExecution: 語意映射失敗: ${semanticResult.errorMessage}")
+                return createFallbackResponse("語意映射失敗")
+            }
+            context = context.copy(
+                semanticExplanation = semanticResult.data as? String,
+                fortuneIntegration = semanticResult.metadata?.get("fortuneIntegration") as? String
+            )
+            WtsLogger.d("DeepSeekExecution: 語意映射完成 -> ${context.semanticExplanation}")
 
             // Step 6: 真正的回答生成
-            WtsLogger.i("Step 6: 執行回答生成模組")
-            val finalResponseResult = responseGenerator.process(context)
-            if (!finalResponseResult.success) {
-                WtsLogger.e("回答生成失敗: ${finalResponseResult.errorMessage}")
+            WtsLogger.i("DeepSeekExecution: Step 6 回答生成模組執行")
+            val finalResponseResult = try { responseGenerator.process(context) } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: 回答生成異常: ${e.message}", e)
                 return createFallbackResponse("回答生成失敗")
             }
-
+            if (!finalResponseResult.success) {
+                WtsLogger.e("DeepSeekExecution: 回答生成失敗: ${finalResponseResult.errorMessage}")
+                return createFallbackResponse("回答生成失敗")
+            }
             val response = finalResponseResult.data as PersonalizedResponse
-            WtsLogger.i("DeepSeekInterpreter: 解籤完成 - 回答長度=${response.coreInterpretation.length}")
+            // Validation gate
+            val isValid = response.coreInterpretation.isNotBlank() && response.confidence >= 0.5f
+            if (!isValid) {
+                WtsLogger.w("DeepSeekExecution: 回答驗證未通過，啟用回退回應")
+                return createFallbackResponse("回答品質不足")
+            }
+            WtsLogger.i("DeepSeekExecution: 解籤完成 - 回答長度=${response.coreInterpretation.length}, confidence=${response.confidence}")
             return response
 
         } catch (e: Exception) {
-            WtsLogger.e("DeepSeekInterpreter 執行失敗: ${e.message}", e)
+            WtsLogger.e("DeepSeekExecution: 執行失敗: ${e.message}", e)
             return createFallbackResponse("系統執行失敗: ${e.message}")
         }
     }
