@@ -34,6 +34,7 @@ import com.example.wtsaskingforsignature.ui.components.WtsPrimaryButton
 import com.example.wtsaskingforsignature.ui.components.WtsOutlinedTextField
 import com.example.wtsaskingforsignature.ui.components.WtsWhiteButton
 import com.example.wtsaskingforsignature.ui.components.WtsFrostedChoiceButton
+import com.example.wtsaskingforsignature.test.SimpleModuleTest
 
 @Composable
 fun ChatScreenNew(nav: NavHostController, id: Int) {
@@ -230,6 +231,22 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                 label = { Text("輸入問題（200字內）") },
                 singleLine = true,
                 supportingText = { Text("${question.value.length}/200") }
+            )
+            // 測試按鈕
+            WtsWhiteButton(
+                onClick = {
+                    scope.launch {
+                        try {
+                            val test = SimpleModuleTest()
+                            val result = test.testModuleCall()
+                            messages.add(ChatMessage(role = "assistant", content = "=== 模組測試結果 ===\n$result"))
+                        } catch (e: Exception) {
+                            messages.add(ChatMessage(role = "assistant", content = "測試失敗: ${e.message}"))
+                        }
+                    }
+                },
+                enabled = !loading.value,
+                text = "測試"
             )
             WtsWhiteButton(
                 onClick = {
