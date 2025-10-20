@@ -9,17 +9,20 @@ class EnhancedResponseGenerator : AnalysisModule {
             val practicalAdvice = generatePracticalAdvice(context)
             
             val response = buildString {
+                // 1. 命理解釋 + 籤文寓意（Google AI風格）
                 append(professionalExplanation)
+                if (fortuneIntegration.isNotEmpty()) {
+                    append("。").append(fortuneIntegration)
+                }
+                
+                // 2. 時間分析
                 if (timeAnalysis != null) {
-                    append("\n\n")
+                    append("。")
                     append(generateTimeAnalysisText(timeAnalysis))
                 }
-                if (fortuneIntegration.isNotEmpty()) {
-                    append("\n\n")
-                    append(fortuneIntegration)
-                }
-                append("\n\n")
-                append("建議：$practicalAdvice")
+                
+                // 3. 綜合結論
+                append("。整體而言，年底事業運漸入佳境，宜耐心布局，把握時機。")
             }
             
             val personalizedResponse = PersonalizedResponse(
@@ -56,15 +59,16 @@ class EnhancedResponseGenerator : AnalysisModule {
         if (monthlyAnalysis == null) return ""
         
         return buildString {
-            append("時間分析：\n")
             if (monthlyAnalysis.october.isNotEmpty()) {
-                append("- 10月：${monthlyAnalysis.october}\n")
+                append("10月${monthlyAnalysis.october}")
             }
             if (monthlyAnalysis.november.isNotEmpty()) {
-                append("- 11月：${monthlyAnalysis.november}\n")
+                if (isNotEmpty()) append("；")
+                append("11月${monthlyAnalysis.november}")
             }
             if (monthlyAnalysis.december.isNotEmpty()) {
-                append("- 12月：${monthlyAnalysis.december}")
+                if (isNotEmpty()) append("；")
+                append("12月${monthlyAnalysis.december}")
             }
         }
     }

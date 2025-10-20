@@ -69,7 +69,8 @@ class EnhancedZiweiSemanticMapper : AnalysisModule {
         
         val fortuneMeaning = TerminologyConfig.fortuneMeanings[fortuneId]?.get(category)
         return fortuneMeaning?.let { meaning ->
-            "黃大仙第${fortuneId}籤寓意「${meaning.meaning}」，象徵${meaning.symbol}"
+            // 直接引用籤文內容來支持邏輯
+            "第${fortuneId}籤寓意「${meaning.meaning}」，暗示${meaning.symbol}。籤文「${meaning.content}」"
         } ?: ""
     }
 }

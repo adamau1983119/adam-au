@@ -18,7 +18,8 @@ data class FortuneMeaning(
     val fortuneId: Int,
     val category: QuestionCategory,
     val meaning: String,
-    val symbol: String
+    val symbol: String,
+    val content: String = "" // 新增：籤文內容
 )
 
 // 解析後的時間範圍
