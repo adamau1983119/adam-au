@@ -21,9 +21,9 @@ $keyFiles = @(
     "app/proguard-rules.pro", 
     "app/src/main/AndroidManifest.xml",
     "app/src/debug/AndroidManifest.xml",
-    "app/src/release/AndroidManifest.xml",
-    "app/src/main/java/com/wts/dsfortune/MainActivity.kt",
-    "app/src/main/java/com/wts/dsfortune/DSFortuneApp.kt"
+    "app/release/AndroidManifest.xml",
+    "app/src/main/java/com/example/wtsaskingforsignature/MainActivity.kt",
+    "app/src/main/java/com/example/wtsaskingforsignature/WtsApp.kt"
 )
 
 function Get-FileFingerprint {

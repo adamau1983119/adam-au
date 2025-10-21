@@ -2,8 +2,13 @@
 package com.example.wtsaskingforsignature.test
 
 import com.example.wtsaskingforsignature.ai.DeepSeekInterpreter
-import com.example.wtsaskingforsignature.data.EnhancedModels.*
-import com.example.wtsaskingforsignature.data.EnhancedContext.*
+import com.example.wtsaskingforsignature.data.EnhancedModels.UserProfile
+import com.example.wtsaskingforsignature.data.EnhancedModels.ZiweiAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.StarAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.PalaceAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.LiuNianAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedContext.Gender
+import kotlinx.coroutines.runBlocking
 
 fun main() {
     println("=== 測試歐俊𠎀第40籤案例 ===")
@@ -45,12 +50,14 @@ fun main() {
     val interpreter = DeepSeekInterpreter()
     
     try {
-        val response = interpreter.interpretFortune(
-            question = question,
-            userProfile = userProfile,
-            ziweiData = ziweiData,
-            fortuneId = fortuneId
-        )
+        val response = runBlocking {
+            interpreter.interpretFortune(
+                question = question,
+                userProfile = userProfile,
+                ziweiData = ziweiData,
+                fortuneId = fortuneId
+            )
+        }
         
         println("=== 生成的回答 ===")
         println("核心解讀：${response.coreInterpretation}")

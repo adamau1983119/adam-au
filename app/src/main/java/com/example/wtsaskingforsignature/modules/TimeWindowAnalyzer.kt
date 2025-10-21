@@ -1,3 +1,15 @@
+package com.example.wtsaskingforsignature.modules
+
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisContext
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisModule
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisResult
+import com.example.wtsaskingforsignature.data.EnhancedModels.MonthlyAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.ParsedTimeRange
+import com.example.wtsaskingforsignature.data.EnhancedModels.ZiweiAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.hasHuaJi
+import com.example.wtsaskingforsignature.data.EnhancedModels.hasHuaKe
+import com.example.wtsaskingforsignature.data.EnhancedModels.hasHuaLu
+import com.example.wtsaskingforsignature.utils.TimeRangeParser
 // 時間窗口分析模組
 class TimeWindowAnalyzer : AnalysisModule {
     private val timeRangeParser = TimeRangeParser()
@@ -55,24 +67,24 @@ class TimeWindowAnalyzer : AnalysisModule {
     
     private fun generateOctoberGuidance(ziweiData: ZiweiAnalysis): String {
         return when {
-            ziweiData.careerPalace.hasHuaJi() -> "宜穩守，避免衝動決策"
-            ziweiData.careerPalace.hasHuaLu() -> "穩步發展，把握機會"
+            ziweiData.careerPalace?.hasHuaJi() == true -> "宜穩守，避免衝動決策"
+            ziweiData.careerPalace?.hasHuaLu() == true -> "穩步發展，把握機會"
             else -> "穩步發展，保持現狀"
         }
     }
     
     private fun generateNovemberGuidance(ziweiData: ZiweiAnalysis): String {
         return when {
-            ziweiData.careerPalace.hasHuaKe() -> "表現機會多，適合爭取上級認可"
-            ziweiData.careerPalace.hasHuaLu() -> "積極表現，把握機會"
+            ziweiData.careerPalace?.hasHuaKe() == true -> "表現機會多，適合爭取上級認可"
+            ziweiData.careerPalace?.hasHuaLu() == true -> "積極表現，把握機會"
             else -> "積極表現，把握機會"
         }
     }
     
     private fun generateDecemberGuidance(ziweiData: ZiweiAnalysis): String {
         return when {
-            ziweiData.careerPalace.hasHuaLu() -> "有升遷或轉職契機"
-            ziweiData.careerPalace.hasHuaKe() -> "總結成果，規劃未來"
+            ziweiData.careerPalace?.hasHuaLu() == true -> "有升遷或轉職契機"
+            ziweiData.careerPalace?.hasHuaKe() == true -> "總結成果，規劃未來"
             else -> "總結成果，規劃未來"
         }
     }

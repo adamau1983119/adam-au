@@ -269,10 +269,14 @@ fun DirectDrawScreen(nav: NavHostController) {
 		Spacer(Modifier.height(8.dp))
 		CategorySelector(selected.value) { selected.value = it }
 		Spacer(Modifier.height(12.dp))
-		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
-			WtsWhiteButton(text = "下一步", onClick = { nav.navigate(Routes.STEPS) }, enabled = selected.value != null)
-		}
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
+            WtsWhiteButton(text = "下一步", onClick = {
+                // 傳遞所求之事到後續流程
+                nav.currentBackStackEntry?.savedStateHandle?.set("pre_category", selected.value ?: "")
+                nav.navigate(Routes.STEPS)
+            }, enabled = selected.value != null)
+        }
 	}
 }
 
@@ -299,10 +303,13 @@ fun CupDrawScreen(nav: NavHostController) {
 		Spacer(Modifier.height(8.dp))
 		CategorySelector(selected.value) { selected.value = it }
 		Spacer(Modifier.height(12.dp))
-		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-			WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
-			WtsWhiteButton(text = "下一步", onClick = { nav.navigate(Routes.STEPS) }, enabled = selected.value != null)
-		}
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
+            WtsWhiteButton(text = "下一步", onClick = {
+                nav.currentBackStackEntry?.savedStateHandle?.set("pre_category", selected.value ?: "")
+                nav.navigate(Routes.STEPS)
+            }, enabled = selected.value != null)
+        }
 	}
 }
 
@@ -331,9 +338,10 @@ fun DailyScreen(nav: NavHostController) {
 		Spacer(Modifier.height(12.dp))
 		Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 			WtsWhiteButton(text = "返回首頁", onClick = { nav.popBackStack() })
-			WtsWhiteButton(text = if (alreadyDrawn.value) "今日已抽" else "抽今日之籤", onClick = {
+            WtsWhiteButton(text = if (alreadyDrawn.value) "今日已抽" else "抽今日之籤", onClick = {
 				if (!alreadyDrawn.value && selected.value != null) {
 					alreadyDrawn.value = true
+                    nav.currentBackStackEntry?.savedStateHandle?.set("pre_category", selected.value ?: "")
 					nav.navigate(Routes.STEPS)
 				}
 			}, enabled = !alreadyDrawn.value && selected.value != null)

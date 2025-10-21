@@ -8,6 +8,7 @@ import com.example.wtsaskingforsignature.data.EnhancedContext.QuestionCategory
 import com.example.wtsaskingforsignature.data.api.DrawResponse
 import com.example.wtsaskingforsignature.data.LocalRepository
 import com.example.wtsaskingforsignature.util.WtsLogger
+import kotlinx.coroutines.runBlocking
 
 /**
  * 真正的籤文資料整合模組
@@ -25,7 +26,7 @@ class FortuneDataIntegrator : AnalysisModule {
             WtsLogger.i("FortuneDataIntegrator: 讀取籤文ID=$fortuneId, 類別=$questionCategory")
             
             // 從App內實際資料庫讀取籤文
-            val fortuneData = readFortuneFromApp(fortuneId)
+            val fortuneData = runBlocking { readFortuneFromApp(fortuneId) }
             val fortuneMeaning = extractFortuneMeaning(fortuneData, questionCategory)
             
             AnalysisResult(
@@ -91,28 +92,29 @@ class FortuneDataIntegrator : AnalysisModule {
         return FortuneMeaning(
             fortuneId = fortuneData.id,
             category = category,
-            meaning = meaning,
+            meaning = meaning ?: "籤文寓意",
             symbol = symbol,
-            content = content
+            content = content ?: ""
         )
     }
     
     /**
      * 從籤文內容提取寓意
      */
-    private fun extractMeaningFromContent(content: String, title: String): String {
+    private fun extractMeaningFromContent(content: String?, title: String?): String {
         // 從標題提取關鍵詞
+        val t = title ?: ""
         val titleKeywords = when {
-            title.contains("碎琴") -> "伯才碎琴"
-            title.contains("封相") -> "姜公封相"
-            title.contains("桃源") -> "誤入桃源"
-            title.contains("訓迪") -> "魯班訓迪"
-            title.contains("惜花") -> "韓夫人惜花"
-            title.contains("歸故里") -> "王羲之歸故里"
-            title.contains("歸家") -> "仁貴歸家"
-            title.contains("占鵲巢") -> "鳩占鵲巢"
-            title.contains("賞菊") -> "陶淵明賞菊"
-            title.contains("不第") -> "蘇秦不第"
+            t.contains("碎琴") -> "伯才碎琴"
+            t.contains("封相") -> "姜公封相"
+            t.contains("桃源") -> "誤入桃源"
+            t.contains("訓迪") -> "魯班訓迪"
+            t.contains("惜花") -> "韓夫人惜花"
+            t.contains("歸故里") -> "王羲之歸故里"
+            t.contains("歸家") -> "仁貴歸家"
+            t.contains("占鵲巢") -> "鳩占鵲巢"
+            t.contains("賞菊") -> "陶淵明賞菊"
+            t.contains("不第") -> "蘇秦不第"
             else -> "籤文寓意"
         }
         
@@ -122,8 +124,8 @@ class FortuneDataIntegrator : AnalysisModule {
     /**
      * 從籤文內容提取象徵意義
      */
-    private fun extractSymbolFromContent(content: String, category: QuestionCategory): String {
-        val lowerContent = content.lowercase()
+    private fun extractSymbolFromContent(content: String?, category: QuestionCategory): String {
+        val lowerContent = (content ?: "").lowercase()
         
         return when (category) {
             QuestionCategory.CAREER -> {

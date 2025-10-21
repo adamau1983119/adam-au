@@ -6,8 +6,6 @@ import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisModule
 import com.example.wtsaskingforsignature.data.EnhancedModels.ZiweiAnalysis
 import com.example.wtsaskingforsignature.data.EnhancedModels.StarAnalysis
 import com.example.wtsaskingforsignature.data.EnhancedModels.PalaceAnalysis
-import com.example.wtsaskingforsignature.data.EnhancedModels.PalaceType
-import com.example.wtsaskingforsignature.data.EnhancedModels.StarType
 import com.example.wtsaskingforsignature.data.EnhancedModels.LiuNianAnalysis
 import com.example.wtsaskingforsignature.data.EnhancedModels.UserProfile
 import com.example.wtsaskingforsignature.data.EnhancedContext.Gender

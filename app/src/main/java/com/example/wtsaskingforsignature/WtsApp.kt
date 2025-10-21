@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import com.example.wtsaskingforsignature.BuildConfig
 
 class WtsApp : Application() {
 	companion object {
@@ -43,8 +44,9 @@ class WtsApp : Application() {
 		// 初始化完整性驗證服務
 		integrityService = IntegrityVerificationService(this)
 		
-		// 使用本地資料庫作為主要數據源
-		ServiceLocator.dataSource = 1
+        // 使用資料源：0=LocalAIRepository(DeepSeekInterpreter)，1=LocalRepository(傳統模板)
+        ServiceLocator.dataSource = if (BuildConfig.BUILD_TYPE == "debug") 0 else 1
+        WtsLogger.i("ServiceLocator.dataSource=${ServiceLocator.dataSource} (0=AI,1=DB)")
 		
 		// 在背景初始化服務
 		applicationScope.launch {

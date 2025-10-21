@@ -14,6 +14,7 @@ import com.example.wtsaskingforsignature.modules.TimeWindowAnalyzer
 import com.example.wtsaskingforsignature.modules.FortuneDataIntegrator
 import com.example.wtsaskingforsignature.modules.ZiweiCalculatorIntegrator
 import com.example.wtsaskingforsignature.util.WtsLogger
+import com.example.wtsaskingforsignature.data.memory.InteractionStore
 
 /**
  * 真正執行模組的DeepSeek解籤器
@@ -69,7 +70,7 @@ class DeepSeekInterpreter {
                 return createFallbackResponse("籤文資料整合失敗")
             }
             val fortuneMeaning = fortuneDataResult.data as? FortuneMeaning
-            context = context.copy(metadata = context.metadata.apply { put("fortuneMeaning", fortuneMeaning) })
+            context = context.copy(metadata = context.metadata.apply { this["fortuneMeaning"] = fortuneMeaning })
             WtsLogger.d("DeepSeekExecution: 籤文整合完成 -> ${fortuneDataResult.metadata}")
 
             // Step 3: 真正的紫微斗數計算
@@ -134,6 +135,27 @@ class DeepSeekInterpreter {
                 return createFallbackResponse("回答品質不足")
             }
             WtsLogger.i("DeepSeekExecution: 解籤完成 - 回答長度=${response.coreInterpretation.length}, confidence=${response.confidence}")
+
+            // 輕量互動記錄（無評分，評分由UI後續補寫）
+            try {
+                val rawQ = context.metadata["rawQuestion"] as? String ?: ""
+                InteractionStore.saveInteraction(
+                    fortuneId = fortuneId,
+                    question = rawQ,
+                    aiResponse = response.coreInterpretation,
+                    confidence = response.confidence,
+                    rating = null,
+                    extras = mapOf(
+                        "category" to (context.question?.category?.name ?: ""),
+                        "intent" to (context.question?.intent?.name ?: ""),
+                        "timeRange" to (context.question?.timeRange ?: ""),
+                        "tone" to response.tone.name
+                    )
+                )
+            } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: interaction logging failed: ${e.message}")
+            }
+
             return response
 
         } catch (e: Exception) {

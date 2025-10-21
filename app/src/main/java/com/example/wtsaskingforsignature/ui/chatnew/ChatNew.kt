@@ -35,6 +35,7 @@ import com.example.wtsaskingforsignature.ui.components.WtsOutlinedTextField
 import com.example.wtsaskingforsignature.ui.components.WtsWhiteButton
 import com.example.wtsaskingforsignature.ui.components.WtsFrostedChoiceButton
 import com.example.wtsaskingforsignature.test.SimpleModuleTest
+import com.example.wtsaskingforsignature.data.memory.InteractionStore
 
 @Composable
 fun ChatScreenNew(nav: NavHostController, id: Int) {
@@ -44,6 +45,8 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
     val loading = remember { mutableStateOf(false) }
     val error = remember { mutableStateOf<String?>(null) }
     var dialogMsg by remember { mutableStateOf<String?>(null) }
+    var showRating by remember { mutableStateOf(false) }
+    var pendingRating by remember { mutableStateOf(0) }
     
     // 錯誤處理：捕獲任何未處理的異常
     LaunchedEffect(Unit) {
@@ -64,6 +67,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
         val saved = nav.currentBackStackEntry?.savedStateHandle
         val titleFromPrev = saved?.get<String>("chat_title")
         val contextFromPrev = saved?.get<String>("chat_context")
+        val preCategory = saved?.get<String>("pre_category")
         Text(
             text = titleFromPrev ?: "第 ${id} 靈簽",
             style = MaterialTheme.typography.headlineMedium,
@@ -348,6 +352,9 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                             if (!contextFromPrev.isNullOrBlank()) {
                                 append("【籤文依據】\n").append(contextFromPrev).append("\n\n")
                             }
+                            if (!preCategory.isNullOrBlank()) {
+                                append("【所求】").append(preCategory).append('\n')
+                            }
                             // 只有在不跳過個人資料時才包含個人資料
                             if (!skipPersonalInfo) {
                                 append("【基本資料】")
@@ -377,6 +384,13 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                                 if (assistants.isNotEmpty()) {
                                     messages.addAll(assistants)
                                     WtsLogger.i("Chat response received: ${assistants.size} messages")
+                                    // 成功收到回覆後，延遲彈出評分（給使用者時間閱讀）
+                                    scope.launch {
+                                        kotlinx.coroutines.delay(60000)
+                                        if (!loading.value) {
+                                            showRating = true
+                                        }
+                                    }
                                 } else {
                                     error.value = "未收到有效回應"
                                 }
@@ -403,6 +417,41 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
                 confirmButton = { TextButton(onClick = { dialogMsg = null }) { Text("確定") } },
                 title = { Text("輸入格式錯誤") },
                 text = { Text(dialogMsg!!) }
+            )
+        }
+
+        if (showRating) {
+            AlertDialog(
+                onDismissRequest = { showRating = false },
+                title = { Text("本次解讀是否有幫助？") },
+                text = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        (1..5).forEach { score ->
+                            TextButton(onClick = { pendingRating = score }) {
+                                Text(if (pendingRating == score) "[$score]" else "$score")
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val lastAi = messages.lastOrNull { it.role.lowercase().contains("assistant") }?.content ?: ""
+                        val ques = saved?.get<String>("last_question") ?: ""
+                        InteractionStore.saveInteraction(
+                            fortuneId = id,
+                            question = ques,
+                            aiResponse = lastAi,
+                            confidence = null,
+                            rating = pendingRating.takeIf { it in 1..5 },
+                            extras = mapOf("source" to "rating_dialog")
+                        )
+                        showRating = false
+                        pendingRating = 0
+                    }) { Text("提交") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showRating = false }) { Text("稍後") }
+                }
             )
         }
 

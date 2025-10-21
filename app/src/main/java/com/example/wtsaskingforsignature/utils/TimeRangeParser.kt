@@ -1,3 +1,7 @@
+package com.example.wtsaskingforsignature.utils
+
+import com.example.wtsaskingforsignature.data.EnhancedModels.ParsedTimeRange
+
 // 時間範圍解析器
 class TimeRangeParser {
     fun parseTimeRange(timeRange: String): ParsedTimeRange {
@@ -15,23 +19,14 @@ class TimeRangeParser {
 
 // 專業術語生成器
 class ProfessionalTermGenerator {
-    fun generateTerm(starType: StarType, palaceType: PalaceType): String {
-        return when (starType) {
-            StarType.HUA_LU -> when (palaceType) {
-                PalaceType.OFFICIAL -> "事業宮見吉星化祿"
-                PalaceType.MING -> "命宮見吉星化祿"
-                else -> "見吉星化祿"
-            }
-            StarType.HUA_KE -> when (palaceType) {
-                PalaceType.OFFICIAL -> "流年官祿宮有貴人星輔助"
-                PalaceType.MING -> "命宮有貴人星輔助"
-                else -> "有貴人星輔助"
-            }
-            StarType.HUA_JI -> when (palaceType) {
-                PalaceType.OFFICIAL -> "事業宮見化忌"
-                PalaceType.MING -> "命宮見化忌"
-                else -> "見化忌"
-            }
+    fun generateTerm(starType: String, palaceType: String): String {
+        return when {
+            starType.contains("祿") && palaceType.contains("官祿") -> "事業宮見吉星化祿"
+            starType.contains("祿") && palaceType.contains("命宮") -> "命宮見吉星化祿"
+            starType.contains("科") && palaceType.contains("官祿") -> "流年官祿宮有貴人星輔助"
+            starType.contains("科") && palaceType.contains("命宮") -> "命宮有貴人星輔助"
+            starType.contains("忌") && palaceType.contains("官祿") -> "事業宮見化忌"
+            starType.contains("忌") && palaceType.contains("命宮") -> "命宮見化忌"
             else -> ""
         }
     }

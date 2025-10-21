@@ -8,8 +8,12 @@ import com.example.wtsaskingforsignature.data.api.DrawResponse
 import com.example.wtsaskingforsignature.util.WtsLogger
 import com.example.wtsaskingforsignature.ziwei.ZiweiAnalysisAdapter
 import com.example.wtsaskingforsignature.ai.DeepSeekInterpreter
-import com.example.wtsaskingforsignature.data.EnhancedModels.*
-import com.example.wtsaskingforsignature.data.EnhancedContext.*
+import com.example.wtsaskingforsignature.data.EnhancedModels.UserProfile
+import com.example.wtsaskingforsignature.data.EnhancedModels.ZiweiAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.StarAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.PalaceAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedModels.LiuNianAnalysis
+import com.example.wtsaskingforsignature.data.EnhancedContext.Gender
 
 /**
  * 本地AI解签系统
@@ -64,28 +68,12 @@ class LocalAIRepository : Repository {
 		)
 	)
 
-	override suspend fun draw(): Result<DrawResponse> {
-		val randomId = (1..100).random()
-		return Result.success(
-			DrawResponse(
-				id = randomId,
-				title = "第${randomId}籤",
-				summary = "本地AI智能解签",
-				content = "这是本地AI系统为您抽取的第${randomId}籤。请提供您的具体问题，我将为您进行详细解读。"
-			)
-		)
-	}
+    // 內容委派到本地資料庫（資產 CSV/JSON），保持與既有App一致
+    private val contentRepository by lazy { LocalRepository() }
 
-	override suspend fun fortune(id: Int): Result<DrawResponse> {
-		return Result.success(
-                DrawResponse(
-				id = id,
-				title = "第${id}籤",
-				summary = "本地AI智能解签",
-				content = "这是第${id}籤的详细内容。请提供您的具体问题，我将为您进行专业解读。"
-			)
-		)
-	}
+    override suspend fun draw(): Result<DrawResponse> = contentRepository.draw()
+
+    override suspend fun fortune(id: Int): Result<DrawResponse> = contentRepository.fortune(id)
 
 	override suspend fun cupResult(): Result<CupResultResponse> {
 		val attempts = List(3) { attempt ->
@@ -126,7 +114,7 @@ class LocalAIRepository : Repository {
             WtsLogger.i("提取用戶資料: ${userProfile.name}, ${userProfile.birthDate}")
 
             // 使用真實的紫微斗數計算（將在模組中執行）
-            val ziweiData = createInitialZiweiData(userProfile)
+            val ziweiData = generateZiweiData(userProfile)
 
             // 使用真正執行的解釋器生成回答
             val response = interpreter.interpretFortune(

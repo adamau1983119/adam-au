@@ -47,8 +47,10 @@ class QuestionAnalyzer : AnalysisModule {
      * 真正的問題分析邏輯
      */
     private fun analyzeQuestion(question: String): QuestionAnalysis {
+        // 0. 解析【所求】標籤；若存在則優先使用
+        val preset = parsePresetCategory(question)
         // 1. 問題分類
-        val category = analyzeQuestionCategory(question)
+        val category = preset ?: analyzeQuestionCategory(question)
         
         // 2. 意圖識別
         val intent = analyzeQuestionIntent(question)
@@ -72,6 +74,21 @@ class QuestionAnalyzer : AnalysisModule {
     }
     
     /**
+     * 從富文本中解析預設分類，例如：『【所求】愛情』
+     */
+    private fun parsePresetCategory(question: String): QuestionCategory? {
+        val line = question.lines().firstOrNull { it.startsWith("【所求】") } ?: return null
+        val value = line.removePrefix("【所求】").trim()
+        return when (value) {
+            "事業", "career", "CAREER" -> QuestionCategory.CAREER
+            "愛情", "感情", "love", "LOVE" -> QuestionCategory.LOVE
+            "健康", "health", "HEALTH" -> QuestionCategory.HEALTH
+            "財運", "money", "wealth", "WEALTH" -> QuestionCategory.WEALTH
+            else -> null
+        }
+    }
+    
+    /**
      * 問題分類 - 基於關鍵詞匹配
      */
     private fun analyzeQuestionCategory(question: String): QuestionCategory {
@@ -87,7 +104,11 @@ class QuestionAnalyzer : AnalysisModule {
             // 感情相關
             lowerQuestion.contains("感情") || lowerQuestion.contains("愛情") ||
             lowerQuestion.contains("婚姻") || lowerQuestion.contains("姻緣") ||
-            lowerQuestion.contains("戀愛") || lowerQuestion.contains("分手") -> QuestionCategory.LOVE
+            lowerQuestion.contains("戀愛") || lowerQuestion.contains("分手") ||
+            lowerQuestion.contains("伴侶") || lowerQuestion.contains("對象") ||
+            lowerQuestion.contains("另一半") || lowerQuestion.contains("戀人") ||
+            lowerQuestion.contains("男友") || lowerQuestion.contains("女友") ||
+            lowerQuestion.contains("脫單") || lowerQuestion.contains("桃花") -> QuestionCategory.LOVE
             
             // 健康相關
             lowerQuestion.contains("健康") || lowerQuestion.contains("身體") ||

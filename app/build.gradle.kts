@@ -3,6 +3,16 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.TimeZone
+
+fun getBuildDate(): String {
+    val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    df.timeZone = TimeZone.getTimeZone("UTC")
+    return df.format(Date())
+}
+
 android {
     namespace = "com.example.wtsaskingforsignature"
     compileSdk = 36
@@ -11,15 +21,15 @@ android {
         applicationId = "com.wts.dsfortune"
         minSdk = 26
         targetSdk = 36
-        versionCode = 19
-        versionName = "1.1.3"
+        versionCode = 20
+        versionName = "1.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
         // 版本資訊
-        buildConfigField("String", "VERSION_NAME", "\"1.1.3\"")
-        buildConfigField("int", "VERSION_CODE", "19")
+        buildConfigField("String", "VERSION_NAME", "\"1.1.4\"")
+        buildConfigField("int", "VERSION_CODE", "20")
         buildConfigField("String", "BUILD_DATE", "\"${getBuildDate()}\"")
         buildConfigField("String", "BUILD_TYPE", "\"release\"")
     }

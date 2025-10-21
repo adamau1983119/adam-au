@@ -1,3 +1,13 @@
+package com.example.wtsaskingforsignature.modules
+
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisContext
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisModule
+import com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisResult
+import com.example.wtsaskingforsignature.data.EnhancedContext.PersonalizedResponse
+import com.example.wtsaskingforsignature.data.EnhancedContext.QuestionCategory
+import com.example.wtsaskingforsignature.data.EnhancedContext.QuestionIntent
+import com.example.wtsaskingforsignature.data.EnhancedContext.ResponseTone
+import com.example.wtsaskingforsignature.data.EnhancedModels.MonthlyAnalysis
 // 增強的回答生成模組
 class EnhancedResponseGenerator : AnalysisModule {
     
@@ -33,8 +43,7 @@ class EnhancedResponseGenerator : AnalysisModule {
                 fortuneConnection = fortuneIntegration,
                 precautions = generatePrecautions(context),
                 tone = selectTone(context),
-                confidence = calculateConfidence(context),
-                professionalLevel = 0.9f
+                confidence = calculateConfidence(context)
             )
             
             AnalysisResult(
@@ -74,11 +83,21 @@ class EnhancedResponseGenerator : AnalysisModule {
     }
     
     private fun generatePracticalAdvice(context: AnalysisContext): String {
-        return when (context.question?.intent) {
-            QuestionIntent.PREDICTION -> "提前布局，穩中求進，把握年底轉機"
-            QuestionIntent.ADVICE -> "保持專業態度，積極爭取機會"
-            QuestionIntent.WARNING -> "謹慎決策，避免衝動"
-            else -> "穩步發展，把握機會"
+        val isLove = context.question?.category == QuestionCategory.LOVE
+        return if (isLove) {
+            when (context.question?.intent) {
+                QuestionIntent.PREDICTION -> "把握社交契機，留意年底緣分出現的場合"
+                QuestionIntent.ADVICE -> "擴大交友圈、提升互動頻率，真誠表達與傾聽"
+                QuestionIntent.WARNING -> "避免急於定論，先理解彼此期待與界線"
+                else -> "調整作息與心態，經營能量，邂逅自然會來"
+            }
+        } else {
+            when (context.question?.intent) {
+                QuestionIntent.PREDICTION -> "提前布局，穩中求進，把握年底轉機"
+                QuestionIntent.ADVICE -> "保持專業態度，積極爭取機會"
+                QuestionIntent.WARNING -> "謹慎決策，避免衝動"
+                else -> "穩步發展，把握機會"
+            }
         }
     }
     

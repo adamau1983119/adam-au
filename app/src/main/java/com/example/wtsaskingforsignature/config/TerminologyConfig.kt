@@ -1,3 +1,8 @@
+package com.example.wtsaskingforsignature.config
+
+import com.example.wtsaskingforsignature.data.EnhancedContext.QuestionCategory
+import com.example.wtsaskingforsignature.data.EnhancedModels.FortuneMeaning
+
 // 專業術語配置
 object TerminologyConfig {
     val careerTerms = mapOf(
