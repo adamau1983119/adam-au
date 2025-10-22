@@ -16,65 +16,80 @@ object TerminologyConfig {
     val fortuneMeanings = mapOf(
         1 to mapOf(
             QuestionCategory.CAREER to FortuneMeaning(
-                fortuneId = 1,
-                category = QuestionCategory.CAREER,
+                id = 1,
+                title = "雲開見日",
+                summary = "否極泰來，年底將迎來事業突破",
+                content = "靈籤求得第一枝 龍虎風雲際會時",
                 meaning = "雲開見日",
                 symbol = "否極泰來，年底將迎來事業突破"
             ),
             QuestionCategory.LOVE to FortuneMeaning(
-                fortuneId = 1,
-                category = QuestionCategory.LOVE,
+                id = 1,
+                title = "雲開見日",
+                summary = "感情運勢轉好，易遇良緣",
+                content = "靈籤求得第一枝 龍虎風雲際會時",
                 meaning = "雲開見日",
                 symbol = "感情運勢轉好，易遇良緣"
             ),
             QuestionCategory.HEALTH to FortuneMeaning(
-                fortuneId = 1,
-                category = QuestionCategory.HEALTH,
+                id = 1,
+                title = "雲開見日",
+                summary = "健康狀況改善，身體轉好",
+                content = "靈籤求得第一枝 龍虎風雲際會時",
                 meaning = "雲開見日",
                 symbol = "健康狀況改善，身體轉好"
             )
         ),
         10 to mapOf(
             QuestionCategory.CAREER to FortuneMeaning(
-                fortuneId = 10,
-                category = QuestionCategory.CAREER,
+                id = 10,
+                title = "時來運轉",
+                summary = "工作運勢將有轉機，年底將迎來事業突破",
+                content = "時來運轉正當時 龍虎風雲際會時",
                 meaning = "時來運轉",
                 symbol = "工作運勢將有轉機，年底將迎來事業突破"
             ),
             QuestionCategory.LOVE to FortuneMeaning(
-                fortuneId = 10,
-                category = QuestionCategory.LOVE,
+                id = 10,
+                title = "時來運轉",
+                summary = "感情運勢轉好，易遇良緣",
+                content = "時來運轉正當時 龍虎風雲際會時",
                 meaning = "時來運轉",
                 symbol = "感情運勢轉好，易遇良緣"
             ),
             QuestionCategory.HEALTH to FortuneMeaning(
-                fortuneId = 10,
-                category = QuestionCategory.HEALTH,
+                id = 10,
+                title = "時來運轉",
+                summary = "健康狀況改善，身體轉好",
+                content = "時來運轉正當時 龍虎風雲際會時",
                 meaning = "時來運轉",
                 symbol = "健康狀況改善，身體轉好"
             )
         ),
         40 to mapOf(
             QuestionCategory.CAREER to FortuneMeaning(
-                fortuneId = 40,
-                category = QuestionCategory.CAREER,
+                id = 40,
+                title = "伯才碎琴",
+                summary = "失友失物、才華無人賞識、百事不利",
+                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方",
                 meaning = "伯才碎琴",
-                symbol = "失友失物、才華無人賞識、百事不利",
-                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方"
+                symbol = "失友失物、才華無人賞識、百事不利"
             ),
             QuestionCategory.LOVE to FortuneMeaning(
-                fortuneId = 40,
-                category = QuestionCategory.LOVE,
+                id = 40,
+                title = "伯才碎琴",
+                summary = "感情中需要調整心態，不要被悲傷影響",
+                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方",
                 meaning = "伯才碎琴",
-                symbol = "感情中需要調整心態，不要被悲傷影響",
-                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方"
+                symbol = "感情中需要調整心態，不要被悲傷影響"
             ),
             QuestionCategory.HEALTH to FortuneMeaning(
-                fortuneId = 40,
-                category = QuestionCategory.HEALTH,
+                id = 40,
+                title = "伯才碎琴",
+                summary = "身體狀況一般，注意保持規律作息",
+                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方",
                 meaning = "伯才碎琴",
-                symbol = "身體狀況一般，注意保持規律作息",
-                content = "人世知音能有幾 碎琴都為子期亡 墳前洒盡千行淚 隔別陰陽各一方"
+                symbol = "身體狀況一般，注意保持規律作息"
             )
         )
     )

@@ -8,6 +8,7 @@ import com.example.wtsaskingforsignature.data.EnhancedContext.QuestionCategory
 import com.example.wtsaskingforsignature.data.EnhancedContext.QuestionIntent
 import com.example.wtsaskingforsignature.data.EnhancedContext.SentimentScore
 import com.example.wtsaskingforsignature.data.EnhancedContext.UrgencyLevel
+import com.example.wtsaskingforsignature.config.MVPSemanticConfig
 import com.example.wtsaskingforsignature.util.WtsLogger
 
 /**
@@ -89,39 +90,11 @@ class QuestionAnalyzer : AnalysisModule {
     }
     
     /**
-     * 問題分類 - 基於關鍵詞匹配
+     * MVP簡化的問題分類 - 使用關鍵詞匹配表
      */
     private fun analyzeQuestionCategory(question: String): QuestionCategory {
-        val lowerQuestion = question.lowercase()
-        
-        return when {
-            // 事業相關
-            lowerQuestion.contains("事業") || lowerQuestion.contains("工作") || 
-            lowerQuestion.contains("職場") || lowerQuestion.contains("升職") ||
-            lowerQuestion.contains("轉職") || lowerQuestion.contains("創業") ||
-            lowerQuestion.contains("升遷") || lowerQuestion.contains("工作運") -> QuestionCategory.CAREER
-            
-            // 感情相關
-            lowerQuestion.contains("感情") || lowerQuestion.contains("愛情") ||
-            lowerQuestion.contains("婚姻") || lowerQuestion.contains("姻緣") ||
-            lowerQuestion.contains("戀愛") || lowerQuestion.contains("分手") ||
-            lowerQuestion.contains("伴侶") || lowerQuestion.contains("對象") ||
-            lowerQuestion.contains("另一半") || lowerQuestion.contains("戀人") ||
-            lowerQuestion.contains("男友") || lowerQuestion.contains("女友") ||
-            lowerQuestion.contains("脫單") || lowerQuestion.contains("桃花") -> QuestionCategory.LOVE
-            
-            // 健康相關
-            lowerQuestion.contains("健康") || lowerQuestion.contains("身體") ||
-            lowerQuestion.contains("疾病") || lowerQuestion.contains("養生") ||
-            lowerQuestion.contains("醫療") -> QuestionCategory.HEALTH
-            
-            // 財運相關
-            lowerQuestion.contains("財運") || lowerQuestion.contains("金錢") ||
-            lowerQuestion.contains("投資") || lowerQuestion.contains("理財") ||
-            lowerQuestion.contains("賺錢") -> QuestionCategory.WEALTH
-            
-            else -> QuestionCategory.GENERAL
-        }
+        WtsLogger.i("MVPQuestionAnalyzer: 使用關鍵詞匹配表分析問題分類")
+        return MVPSemanticConfig.matchCategory(question)
     }
     
     /**

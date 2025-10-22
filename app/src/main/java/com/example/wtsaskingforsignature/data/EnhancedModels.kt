@@ -20,11 +20,12 @@ data class ProfessionalTerminology(
 
 // 籤文寓意映射
 data class FortuneMeaning(
-    val fortuneId: Int,
-    val category: QuestionCategory,
-    val meaning: String,
-    val symbol: String,
-    val content: String = "" // 新增：籤文內容
+    val id: Int,
+    val title: String,
+    val summary: String,
+    val content: String,
+    val meaning: String = "",
+    val symbol: String = ""
 )
 
 // 解析後的時間範圍
@@ -37,7 +38,11 @@ data class ParsedTimeRange(
 // 紫微相關資料（最小可行版，與 Integrator 對齊）
 data class ZiweiAnalysis(
     val mingGong: StarAnalysis? = null,
+    val shenGong: StarAnalysis? = null,
     val careerPalace: PalaceAnalysis? = null,
+    val lovePalace: PalaceAnalysis? = null,
+    val wealthPalace: PalaceAnalysis? = null,
+    val healthPalace: PalaceAnalysis? = null,
     val liuNian: LiuNianAnalysis? = null
 )
 

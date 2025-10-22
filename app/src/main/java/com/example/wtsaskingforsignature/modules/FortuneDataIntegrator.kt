@@ -90,11 +90,12 @@ class FortuneDataIntegrator : AnalysisModule {
         val symbol = extractSymbolFromContent(content, category)
         
         return FortuneMeaning(
-            fortuneId = fortuneData.id,
-            category = category,
+            id = fortuneData.id,
+            title = fortuneData.title ?: "籤文標題",
+            summary = symbol,
+            content = content ?: "",
             meaning = meaning ?: "籤文寓意",
-            symbol = symbol,
-            content = content ?: ""
+            symbol = symbol
         )
     }
     

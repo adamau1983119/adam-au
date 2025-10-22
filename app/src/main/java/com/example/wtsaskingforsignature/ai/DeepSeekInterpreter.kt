@@ -13,8 +13,10 @@ import com.example.wtsaskingforsignature.modules.QuestionAnalyzer
 import com.example.wtsaskingforsignature.modules.TimeWindowAnalyzer
 import com.example.wtsaskingforsignature.modules.FortuneDataIntegrator
 import com.example.wtsaskingforsignature.modules.ZiweiCalculatorIntegrator
+import com.example.wtsaskingforsignature.modules.StandardTemplateGenerator
 import com.example.wtsaskingforsignature.util.WtsLogger
 import com.example.wtsaskingforsignature.data.memory.InteractionStore
+import com.example.wtsaskingforsignature.utils.ReverseExtractionTool
 
 /**
  * 真正執行模組的DeepSeek解籤器
@@ -29,6 +31,7 @@ class DeepSeekInterpreter {
     private val timeWindowAnalyzer = TimeWindowAnalyzer()
     private val ziweiSemanticMapper = EnhancedZiweiSemanticMapper()
     private val responseGenerator = EnhancedResponseGenerator()
+    private val standardTemplateGenerator = StandardTemplateGenerator()
 
     suspend fun interpretFortune(
         question: String,
@@ -117,17 +120,35 @@ class DeepSeekInterpreter {
             )
             WtsLogger.d("DeepSeekExecution: 語意映射完成 -> ${context.semanticExplanation}")
 
-            // Step 6: 真正的回答生成
-            WtsLogger.i("DeepSeekExecution: Step 6 回答生成模組執行")
-            val finalResponseResult = try { responseGenerator.process(context) } catch (e: Exception) {
-                WtsLogger.e("DeepSeekExecution: 回答生成異常: ${e.message}", e)
-                return createFallbackResponse("回答生成失敗")
+            // Step 6: 標準範本回答生成
+            WtsLogger.i("DeepSeekExecution: Step 6 標準範本回答生成模組執行")
+            val response = try {
+                val templateResult = standardTemplateGenerator.process(context)
+                if (templateResult.success) {
+                    templateResult.data as PersonalizedResponse
+                } else {
+                    WtsLogger.w("DeepSeekExecution: 標準範本回答生成失敗，回退到原始回答生成器")
+                    val fallbackResult = responseGenerator.process(context)
+                    if (fallbackResult.success) {
+                        fallbackResult.data as PersonalizedResponse
+                    } else {
+                        createFallbackResponse("回答生成失敗")
+                    }
+                }
+            } catch (e: Exception) {
+                WtsLogger.e("DeepSeekExecution: 標準範本回答生成異常: ${e.message}", e)
+                try {
+                    val fallbackResult = responseGenerator.process(context)
+                    if (fallbackResult.success) {
+                        fallbackResult.data as PersonalizedResponse
+                    } else {
+                        createFallbackResponse("回答生成失敗")
+                    }
+                } catch (e2: Exception) {
+                    WtsLogger.e("DeepSeekExecution: 回退回答生成也失敗: ${e2.message}", e2)
+                    createFallbackResponse("回答生成失敗")
+                }
             }
-            if (!finalResponseResult.success) {
-                WtsLogger.e("DeepSeekExecution: 回答生成失敗: ${finalResponseResult.errorMessage}")
-                return createFallbackResponse("回答生成失敗")
-            }
-            val response = finalResponseResult.data as PersonalizedResponse
             // Validation gate
             val isValid = response.coreInterpretation.isNotBlank() && response.confidence >= 0.5f
             if (!isValid) {
@@ -152,6 +173,17 @@ class DeepSeekInterpreter {
                         "tone" to response.tone.name
                     )
                 )
+                
+                // MVP反向提取：記錄用戶問題和籤文內容映射
+                val fortuneData = context.metadata["fortuneMeaning"] as? com.example.wtsaskingforsignature.data.EnhancedModels.FortuneMeaning
+                val questionData = context.question
+                if (fortuneData != null && questionData != null) {
+                    ReverseExtractionTool.recordQuestionFortuneMapping(
+                        question = rawQ,
+                        fortuneContent = fortuneData.content,
+                        category = questionData.category
+                    )
+                }
             } catch (e: Exception) {
                 WtsLogger.e("DeepSeekExecution: interaction logging failed: ${e.message}")
             }
