@@ -31,7 +31,8 @@ class StandardTemplateGenerator : AnalysisModule {
                 fortuneId = fortuneId,
                 question = question,
                 ziweiData = ziweiData,
-                fortuneMeaning = fortuneMeaning
+                fortuneMeaning = fortuneMeaning,
+                context = context
             )
             
             val personalizedResponse = PersonalizedResponse(
@@ -70,7 +71,8 @@ class StandardTemplateGenerator : AnalysisModule {
         fortuneId: Int,
         question: com.example.wtsaskingforsignature.data.EnhancedContext.QuestionAnalysis?,
         ziweiData: ZiweiAnalysis?,
-        fortuneMeaning: FortuneMeaning?
+        fortuneMeaning: FortuneMeaning?,
+        context: com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisContext
     ): String {
         return buildString {
             // 靈籤基本資訊
