@@ -89,7 +89,7 @@ class StandardTemplateGenerator : AnalysisModule {
             // 問題方向 + 對應籤文內容
             appendLine("🎯 問題方向 + 對應籤文內容")
             appendLine()
-            val personalizedQuestion = generatePersonalizedQuestion(question)
+            val personalizedQuestion = generatePersonalizedQuestion(question, context)
             val fortuneDirection = getFortuneDirection(question?.category, fortuneMeaning)
             appendLine(personalizedQuestion)
             appendLine("籤文顯示：${fortuneDirection}")
@@ -127,12 +127,12 @@ class StandardTemplateGenerator : AnalysisModule {
     /**
      * 根據用戶實際問題生成個性化問題描述
      */
-    private fun generatePersonalizedQuestion(question: com.example.wtsaskingforsignature.data.EnhancedContext.QuestionAnalysis?): String {
+    private fun generatePersonalizedQuestion(question: com.example.wtsaskingforsignature.data.EnhancedContext.QuestionAnalysis?, context: com.example.wtsaskingforsignature.data.EnhancedContext.AnalysisContext): String {
         if (question == null) {
             return "你現在問的是綜合運勢的問題，"
         }
         
-        val rawQuestion = question.originalQuestion ?: ""
+        val rawQuestion = context.metadata["rawQuestion"] as? String ?: ""
         val category = question.category
         val timeRange = question.timeRange ?: ""
         
