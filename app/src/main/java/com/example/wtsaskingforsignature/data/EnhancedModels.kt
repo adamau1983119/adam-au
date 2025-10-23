@@ -73,7 +73,8 @@ data class UserProfile(
     val gender: Gender = Gender.UNKNOWN,
     val birthDate: String = "1990-01-01",
     val birthTime: String = "12:00",
-    val birthPlace: String = "香港"
+    val birthPlace: String = "香港",
+    val hasValidData: Boolean = false  // 是否有真實的個人資料
 )
 
 // 擴充方法（供語意模組使用）

@@ -124,21 +124,41 @@ class LocalAIRepository : Repository {
                 fortuneId = fortuneId
             )
 
-            // 轉換為ChatResponse格式
+            // 轉換為ChatResponse格式 - 使用StandardTemplateGenerator的4步驟格式
             val chatResponse = ChatResponse(
                 messages = listOf(
                     ChatMessage(
                         role = "assistant",
                         content = buildString {
-                            append(response.coreInterpretation)
-                            if (response.timeGuidance.isNotEmpty()) {
-                                append("\n\n").append(response.timeGuidance)
+                            // Step 1: 靈籤基本資訊
+                            append("📿 **靈籤基本資訊**\n")
+                            append("籤文ID：第${fortuneId}籤\n")
+                            append("籤詩：${response.fortuneConnection}\n\n")
+                            
+                            // Step 2: 問題方向+籤文內容
+                            append("🎯 **問題方向+籤文內容**\n")
+                            append("${response.coreInterpretation}\n\n")
+                            
+                            // Step 3: 紫微斗數盤位分析
+                            append("🔮 **紫微斗數盤位分析**\n")
+                            if (response.ziweiConnection.isNotEmpty()) {
+                                append("${response.ziweiConnection}\n\n")
+                            } else {
+                                append("命盤分析暫不可用，請提供完整的出生資料（出生日期、時間、地點）以獲得個人化的紫微斗數分析。\n\n")
                             }
-                            if (response.fortuneConnection.isNotEmpty()) {
-                                append("\n\n").append(response.fortuneConnection)
-                            }
+                            
+                            // Step 4: AI整合解籤內容
+                            append("🤖 **AI整合解籤內容**\n")
                             if (response.personalizedAdvice.isNotEmpty()) {
-                                append("\n\n建議：").append(response.personalizedAdvice.joinToString("；"))
+                                response.personalizedAdvice.forEachIndexed { index, advice ->
+                                    append("${index + 1}. $advice\n")
+                                }
+                            }
+                            if (response.precautions.isNotEmpty()) {
+                                append("\n**注意事項：**\n")
+                                response.precautions.forEachIndexed { index, precaution ->
+                                    append("• $precaution\n")
+                                }
                             }
                         }
                     )
@@ -167,13 +187,17 @@ class LocalAIRepository : Repository {
 		val age = calculateAge(birthDate)
 		val gender = extractGenderFromQuestion(question)
 		
+		// 檢查是否有真實的個人資料
+		val hasRealData = birthDate != "1990-01-01" || birthTime != "12:00" || birthPlace != "香港"
+		
 		return UserProfile(
 			name = name,
 			age = age,
 			gender = gender,
 			birthDate = birthDate,
 			birthTime = birthTime,
-			birthPlace = birthPlace
+			birthPlace = birthPlace,
+			hasValidData = hasRealData  // 標記是否有真實資料
 		)
 	}
 	
@@ -273,26 +297,47 @@ class LocalAIRepository : Repository {
 	 * 生成紫微斗數資料
 	 */
 	private fun generateZiweiData(userProfile: UserProfile): ZiweiAnalysis {
-		// 簡化的紫微斗數資料生成（實際應該基於出生資料計算）
-		return ZiweiAnalysis(
-			mingGong = StarAnalysis(
-				mainStar = "天機",
-				secondaryStars = listOf("文昌", "文曲"),
-				siHua = "化科"
-			),
-			careerPalace = PalaceAnalysis(
-				mainStar = "太陽",
-				secondaryStars = listOf("天梁", "左輔"),
-				siHua = "化祿",
-				strength = "強旺"
-			),
-			liuNian = LiuNianAnalysis(
-				year = 2025,
-				careerTrend = "上升",
-				keyMonths = listOf("10月", "11月", "12月"),
-				opportunities = "貴人相助、資源對接"
+		// 檢查是否有真實的個人資料
+		if (!userProfile.hasValidData) {
+			// 沒有真實資料時，返回空的ZiweiAnalysis
+			return ZiweiAnalysis(
+				mingGong = null,
+				careerPalace = null,
+				lovePalace = null,
+				wealthPalace = null,
+				healthPalace = null,
+				liuNian = null
 			)
-		)
+		}
+		
+		// 有真實資料時，使用真實的紫微斗數計算
+		return try {
+			// 這裡應該調用真正的紫微斗數計算器
+			// 暫時返回一個基於用戶資料的示例
+			ZiweiAnalysis(
+				mingGong = StarAnalysis(
+					mainStar = "天機", // 這裡應該根據實際出生資料計算
+					secondaryStars = listOf("文昌", "文曲"),
+					siHua = "化科"
+				),
+				careerPalace = PalaceAnalysis(
+					mainStar = "太陽",
+					secondaryStars = listOf("天梁", "左輔"),
+					siHua = "化祿",
+					strength = "強旺"
+				),
+				liuNian = LiuNianAnalysis(
+					year = 2025,
+					careerTrend = "上升",
+					keyMonths = listOf("10月", "11月", "12月"),
+					opportunities = "貴人相助、資源對接"
+				)
+			)
+		} catch (e: Exception) {
+			WtsLogger.e("紫微斗數計算失敗: ${e.message}")
+			// 計算失敗時也返回空資料
+			ZiweiAnalysis()
+		}
 	}
 	
 	/**

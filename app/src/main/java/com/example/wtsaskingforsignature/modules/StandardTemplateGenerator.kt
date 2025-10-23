@@ -269,38 +269,81 @@ class StandardTemplateGenerator : AnalysisModule {
     
     private fun getFortuneDirection(category: QuestionCategory?, fortuneMeaning: FortuneMeaning?): String {
         val content = fortuneMeaning?.content ?: ""
-        return when (category) {
-            QuestionCategory.CAREER -> {
-                when {
-                    content.contains("貴人") -> "由於有很多貴人扶持，謀事較易成就"
-                    content.contains("升遷") || content.contains("官祿") -> "事業發展順利，有升遷機會"
-                    content.contains("創業") -> "適合創業或開拓新領域"
-                    else -> "事業運勢平穩，需要耐心經營"
+        val title = fortuneMeaning?.title ?: ""
+        
+        // 基於真實籤文內容進行分析，而不是固定模板
+        return buildString {
+            // 分析籤文的情感傾向
+            val sentiment = analyzeFortuneSentiment(content, fortuneMeaning?.summary ?: "")
+            
+            // 根據籤文內容和問題類別生成個性化分析
+            when (category) {
+                QuestionCategory.CAREER -> {
+                    when {
+                        content.contains("貴人") -> append("籤文顯示有貴人相助，事業發展將得到有力支持")
+                        content.contains("升遷") || content.contains("官祿") -> append("籤文預示事業發展順利，有晉升機會")
+                        content.contains("創業") -> append("籤文鼓勵開拓新領域，適合創業發展")
+                        content.contains("困難") || content.contains("阻礙") -> append("籤文提示當前可能遇到挑戰，需要堅持和智慧")
+                        else -> append("籤文顯示事業運勢${sentiment}，需要${getActionAdvice(sentiment)}")
+                    }
+                }
+                QuestionCategory.LOVE -> {
+                    when {
+                        content.contains("婚姻") || content.contains("姻緣") -> append("籤文預示感情發展順利，有機會遇到合適對象")
+                        content.contains("桃花") -> append("籤文顯示桃花運勢${sentiment}，感情機會${if(sentiment == "積極") "增加" else "需要等待"}")
+                        content.contains("和合") -> append("籤文預示感情關係和諧，適合進一步發展")
+                        content.contains("分離") || content.contains("離別") -> append("籤文提示感情可能面臨考驗，需要溝通理解")
+                        else -> append("籤文顯示感情運勢${sentiment}，需要${getActionAdvice(sentiment)}")
+                    }
+                }
+                QuestionCategory.HEALTH -> {
+                    when {
+                        content.contains("病即愈") -> append("籤文預示健康狀況將得到改善")
+                        content.contains("身體") -> append("籤文提醒注意身體保養，健康運勢${sentiment}")
+                        content.contains("疾病") -> append("籤文提示需要關注健康問題，及時調理")
+                        else -> append("籤文顯示健康運勢${sentiment}，建議${getActionAdvice(sentiment)}")
+                    }
+                }
+                QuestionCategory.WEALTH -> {
+                    when {
+                        content.contains("求財豐") -> append("籤文預示財運亨通，正財偏財都有機會")
+                        content.contains("投資") -> append("籤文提示投資運勢${sentiment}，需要謹慎選擇")
+                        content.contains("破財") -> append("籤文提醒注意財務管理，避免不必要的支出")
+                        else -> append("籤文顯示財運${sentiment}，建議${getActionAdvice(sentiment)}")
+                    }
+                }
+                else -> {
+                    append("籤文顯示運勢${sentiment}，需要${getActionAdvice(sentiment)}")
                 }
             }
-            QuestionCategory.LOVE -> {
-                when {
-                    content.contains("婚姻") || content.contains("姻緣") -> "感情發展順利，有機會遇到心儀對象"
-                    content.contains("桃花") -> "桃花運旺盛，感情機會增加"
-                    content.contains("和合") -> "感情關係和諧，適合進一步發展"
-                    else -> "感情運勢平穩，需要主動把握機會"
-                }
-            }
-            QuestionCategory.HEALTH -> {
-                when {
-                    content.contains("病即愈") -> "健康狀況良好，疾病將得到改善"
-                    content.contains("身體") -> "身體狀況穩定，注意保養"
-                    else -> "健康運勢平穩，注意日常保健"
-                }
-            }
-            QuestionCategory.WEALTH -> {
-                when {
-                    content.contains("求財豐") -> "財運亨通，正財偏財都有機會"
-                    content.contains("投資") -> "投資運勢良好，但需謹慎選擇"
-                    else -> "財運平穩，需要理性理財"
-                }
-            }
-            else -> "運勢整體平穩，需要耐心等待時機"
+        }
+    }
+    
+    /**
+     * 分析籤文情感傾向
+     */
+    private fun analyzeFortuneSentiment(content: String, summary: String): String {
+        val positiveKeywords = listOf("吉", "好", "順", "成", "利", "福", "貴", "升", "發")
+        val negativeKeywords = listOf("凶", "壞", "逆", "敗", "不利", "禍", "破", "降", "失")
+        
+        val positiveCount = positiveKeywords.count { content.contains(it) || summary.contains(it) }
+        val negativeCount = negativeKeywords.count { content.contains(it) || summary.contains(it) }
+        
+        return when {
+            positiveCount > negativeCount -> "積極向上"
+            negativeCount > positiveCount -> "需要謹慎"
+            else -> "平穩發展"
+        }
+    }
+    
+    /**
+     * 根據情感傾向獲取行動建議
+     */
+    private fun getActionAdvice(sentiment: String): String {
+        return when (sentiment) {
+            "積極向上" -> "把握機會，積極進取"
+            "需要謹慎" -> "謹慎行事，避免衝動"
+            else -> "穩步前進，耐心等待"
         }
     }
     
@@ -312,6 +355,14 @@ class StandardTemplateGenerator : AnalysisModule {
         // 驗證是否有基本的命盤資料
         if (!hasValidZiweiData(ziweiData)) {
             return "命盤資料不完整，無法進行準確分析。請確認已提供正確的出生資料。"
+        }
+        
+        // 檢查是否有真實的個人資料
+        val hasRealData = ziweiData.mingGong?.mainStar?.isNotBlank() == true && 
+                         ziweiData.mingGong?.mainStar != "天機" // 避免使用預設值
+        
+        if (!hasRealData) {
+            return "命盤分析暫不可用，請提供完整的出生資料（出生日期、時間、地點）以獲得個人化的紫微斗數分析。"
         }
         
         val palace = getRelevantPalace(ziweiData, category)

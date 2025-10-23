@@ -45,8 +45,9 @@ class WtsApp : Application() {
 		integrityService = IntegrityVerificationService(this)
 		
         // 使用資料源：0=LocalAIRepository(DeepSeekInterpreter)，1=LocalRepository(傳統模板)
-        ServiceLocator.dataSource = if (BuildConfig.BUILD_TYPE == "debug") 0 else 1
-        WtsLogger.i("ServiceLocator.dataSource=${ServiceLocator.dataSource} (0=AI,1=DB)")
+        // 強制使用LocalAIRepository以啟用DeepSeek解籤功能
+        ServiceLocator.dataSource = 0
+        WtsLogger.i("ServiceLocator.dataSource=${ServiceLocator.dataSource} (0=AI,1=DB) - 強制使用AI模式")
 		
 		// 在背景初始化服務
 		applicationScope.launch {
