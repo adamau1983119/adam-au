@@ -24,7 +24,26 @@ class ZiweiCalculatorIntegrator : AnalysisModule {
     
     override fun process(context: AnalysisContext): AnalysisResult {
         return try {
-            val userProfile = context.userProfile ?: createDefaultUserProfile()
+            val userProfile = context.userProfile
+            
+            // 如果沒有用戶資料，返回空的紫微斗數分析
+            if (userProfile == null || !userProfile.hasValidData) {
+                WtsLogger.i("ZiweiCalculatorIntegrator: 沒有有效的用戶資料，返回空的紫微斗數分析")
+                return AnalysisResult(
+                    success = true,
+                    resultCode = "NO_USER_DATA",
+                    data = ZiweiAnalysis(
+                        mingGong = null,
+                        shenGong = null,
+                        careerPalace = null,
+                        lovePalace = null,
+                        wealthPalace = null,
+                        healthPalace = null,
+                        liuNian = null
+                    ),
+                    moduleName = getModuleName()
+                )
+            }
             
             WtsLogger.i("ZiweiCalculatorIntegrator: 計算紫微斗數 - ${userProfile.name}, ${userProfile.birthDate}")
             
@@ -67,7 +86,16 @@ class ZiweiCalculatorIntegrator : AnalysisModule {
             
         } catch (e: Exception) {
             WtsLogger.e("紫微斗數計算失敗: ${e.message}")
-            return createDefaultZiweiAnalysis(userProfile)
+            // 沒有真實資料時，返回空的ZiweiAnalysis
+            return ZiweiAnalysis(
+                mingGong = null,
+                shenGong = null,
+                careerPalace = null,
+                lovePalace = null,
+                wealthPalace = null,
+                healthPalace = null,
+                liuNian = null
+            )
         }
     }
     

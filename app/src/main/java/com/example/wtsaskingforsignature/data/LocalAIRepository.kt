@@ -109,12 +109,43 @@ class LocalAIRepository : Repository {
             // 創建DeepSeekInterpreter實例
             val interpreter = DeepSeekInterpreter()
 
-            // 從問題中提取真實用戶資料
-            val userProfile = extractRealUserProfile(question)
-            WtsLogger.i("提取用戶資料: ${userProfile.name}, ${userProfile.birthDate}")
-
-            // 使用真實的紫微斗數計算（將在模組中執行）
-            val ziweiData = generateZiweiData(userProfile)
+            // 檢查問題中是否包含個人資料
+            val hasPersonalData = question.contains("【基本資料】") || 
+                                 question.contains("姓名：") || 
+                                 question.contains("出生日期：") ||
+                                 question.contains("出生時間：")
+            
+            val userProfile: UserProfile
+            val ziweiData: ZiweiAnalysis
+            
+            if (hasPersonalData) {
+                // 情況1：有個人資料 - 提取並使用
+                WtsLogger.i("LocalAIRepository: 檢測到個人資料，進行個性化分析")
+                userProfile = extractRealUserProfile(question)
+                ziweiData = generateZiweiData(userProfile)
+                WtsLogger.i("提取用戶資料: ${userProfile.name}, ${userProfile.birthDate}")
+            } else {
+                // 情況2：沒有個人資料 - 使用預設值
+                WtsLogger.i("LocalAIRepository: 未檢測到個人資料，使用直接解籤模式")
+                userProfile = UserProfile(
+                    name = "用戶",
+                    age = 30,
+                    gender = Gender.UNKNOWN,
+                    birthDate = "1990-01-01",
+                    birthTime = "12:00",
+                    birthPlace = "香港",
+                    hasValidData = false  // 標記為無效資料
+                )
+                ziweiData = ZiweiAnalysis(
+                    mingGong = null,
+                    shenGong = null,
+                    careerPalace = null,
+                    lovePalace = null,
+                    wealthPalace = null,
+                    healthPalace = null,
+                    liuNian = null
+                )
+            }
 
             // 使用真正執行的解釋器生成回答
             val response = interpreter.interpretFortune(
