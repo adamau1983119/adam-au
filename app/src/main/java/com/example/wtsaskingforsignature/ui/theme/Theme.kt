@@ -25,13 +25,13 @@ private val DarkColors = darkColorScheme(
 	primary = MdPrimaryDark,
 	onPrimary = MdOnPrimaryDark,
 	secondary = MdSecondaryDark,
-	onSecondary = Color(0xFF000000),  // 次色上的文字為黑色
+	onSecondary = MdOnSurfaceDark,  // 次色上的文字使用主題深色
 	background = MdBackgroundDark,
-	onBackground = Color(0xFFFFFFFF), // 背景上的文字為白色
+	onBackground = MdOnSurfaceDark, // 背景上的文字使用主題深色
 	surface = MdSurfaceDark,
 	onSurface = MdOnSurfaceDark,
 	surfaceVariant = Color(0xFF3A3A3A), // 表面變體色
-	onSurfaceVariant = Color(0xFFE0E0E0), // 表面變體上的文字
+	onSurfaceVariant = MdOnSurfaceDark, // 表面變體上的文字使用主題深色
 	outline = MdOutlineDark,
 	outlineVariant = Color(0xFF555555) // 邊框變體
 )

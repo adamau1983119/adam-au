@@ -6,6 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 import com.example.wtsaskingforsignature.R
 
 val AppFontFamily = try {
@@ -14,23 +15,41 @@ val AppFontFamily = try {
 	FontFamily.Serif
 }
 
-// 字重與排版：標題 SemiBold、標題 Medium、內文 Regular；移除多餘 font padding
+// Version 21 優化：字重與排版（提升可讀性和視覺層次）
 private val headlineStyle = TextStyle(
     fontFamily = AppFontFamily,
-    fontWeight = FontWeight.SemiBold,
-    platformStyle = PlatformTextStyle(includeFontPadding = false)
+    fontWeight = FontWeight.Bold,        // 提升標題字重，增強視覺層次
+    platformStyle = PlatformTextStyle(includeFontPadding = false),
+    lineHeight = 1.2.sp                  // 優化行高，提升可讀性
 )
 
 private val titleStyle = TextStyle(
     fontFamily = AppFontFamily,
-    fontWeight = FontWeight.Medium,
-    platformStyle = PlatformTextStyle(includeFontPadding = false)
+    fontWeight = FontWeight.SemiBold,    // 提升標題字重
+    platformStyle = PlatformTextStyle(includeFontPadding = false),
+    lineHeight = 1.3.sp                  // 優化行高
 )
 
 private val bodyStyle = TextStyle(
     fontFamily = AppFontFamily,
     fontWeight = FontWeight.Normal,
-    platformStyle = PlatformTextStyle(includeFontPadding = false)
+    platformStyle = PlatformTextStyle(includeFontPadding = false),
+    lineHeight = 1.5.sp                  // 優化行高，提升閱讀體驗
+)
+
+// Version 21 新增：特殊用途字體樣式
+private val buttonStyle = TextStyle(
+    fontFamily = AppFontFamily,
+    fontWeight = FontWeight.Medium,      // 按鈕使用中等字重
+    platformStyle = PlatformTextStyle(includeFontPadding = false),
+    lineHeight = 1.0.sp                  // 按鈕使用緊湊行高
+)
+
+private val captionStyle = TextStyle(
+    fontFamily = AppFontFamily,
+    fontWeight = FontWeight.Normal,
+    platformStyle = PlatformTextStyle(includeFontPadding = false),
+    lineHeight = 1.4.sp                  // 說明文字適中行高
 )
 
 val WtsTypography: Typography = Typography().let { base ->

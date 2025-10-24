@@ -467,7 +467,7 @@ fun ChatScreenNew(nav: NavHostController, id: Int) {
 private fun ChatBubble(role: String, text: String) {
     val isAi = role.lowercase().contains("assistant") || role.lowercase().contains("ai")
     val bg = if (isAi) Color(0xFFE1B0B6) else MaterialTheme.colorScheme.surfaceVariant
-    val fg = if (isAi) Color.White else MaterialTheme.colorScheme.onSurface
+    val fg = if (isAi) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = if (isAi) Alignment.CenterStart else Alignment.CenterEnd

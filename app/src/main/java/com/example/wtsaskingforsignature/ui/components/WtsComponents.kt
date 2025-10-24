@@ -58,12 +58,19 @@ fun WtsPrimaryButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.height(if (large) WtsDimens.ButtonHeightLarge else WtsDimens.ButtonHeightMedium),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(WtsDimens.CornerRadiusXLarge),  // 使用統一的圓角系統
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
-        )
-    ) { Text(text, style = MaterialTheme.typography.titleMedium) }
+        ),
+        contentPadding = PaddingValues(horizontal = WtsDimens.SpacingLarge)  // 優化內邊距
+    ) { 
+        Text(
+            text, 
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = WtsDimens.SpacingSmall)  // 優化文字間距
+        ) 
+    }
 }
 
 @Composable
@@ -117,12 +124,19 @@ fun WtsWhiteButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.height(if (large) WtsDimens.ButtonHeightLarge else WtsDimens.ButtonHeightMedium),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(WtsDimens.CornerRadiusXLarge),  // 使用統一的圓角系統
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White.copy(alpha = 0.5f),
+            containerColor = Color.White.copy(alpha = 0.6f),  // 提升透明度，改善可讀性
             contentColor = MaterialTheme.colorScheme.onSurface
-        )
-    ) { Text(text, style = MaterialTheme.typography.titleMedium) }
+        ),
+        contentPadding = PaddingValues(horizontal = WtsDimens.SpacingLarge)  // 優化內邊距
+    ) { 
+        Text(
+            text, 
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = WtsDimens.SpacingSmall)  // 優化文字間距
+        ) 
+    }
 }
 
 // 分類選擇用：半透明白底 + 邊框；選中時邊框用主色

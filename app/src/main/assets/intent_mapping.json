@@ -1,0 +1,315 @@
+{
+  "intent_categories": {
+    "general_fortune": {
+      "chinese": "綜合運程",
+      "english": "General Fortune",
+      "description": {
+        "chinese": "整體運勢分析",
+        "english": "Overall fortune analysis"
+      },
+      "required_tags": ["A1", "A2-1", "A2-2", "A3", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"],
+      "priority": 1
+    },
+    "career": {
+      "chinese": "事業",
+      "english": "Career",
+      "description": {
+        "chinese": "工作、升遷、職場發展",
+        "english": "Work, promotion, career development"
+      },
+      "required_tags": ["A1", "B"],
+      "priority": 2
+    },
+    "wealth": {
+      "chinese": "財運",
+      "english": "Wealth",
+      "description": {
+        "chinese": "金錢、投資、理財",
+        "english": "Money, investment, financial management"
+      },
+      "required_tags": ["A1", "C"],
+      "priority": 2
+    },
+    "love": {
+      "chinese": "愛情",
+      "english": "Love",
+      "description": {
+        "chinese": "戀愛、感情發展",
+        "english": "Romance, relationship development"
+      },
+      "required_tags": ["A1", "F"],
+      "priority": 2
+    },
+    "marriage": {
+      "chinese": "婚姻",
+      "english": "Marriage",
+      "description": {
+        "chinese": "結婚、夫妻關係",
+        "english": "Marriage, marital relationship"
+      },
+      "required_tags": ["A1", "F"],
+      "priority": 2
+    },
+    "health": {
+      "chinese": "健康",
+      "english": "Health",
+      "description": {
+        "chinese": "身體狀況、疾病",
+        "english": "Physical condition, illness"
+      },
+      "required_tags": ["A1", "I"],
+      "priority": 2
+    },
+    "family": {
+      "chinese": "家庭",
+      "english": "Family",
+      "description": {
+        "chinese": "家庭關係、子女",
+        "english": "Family relationships, children"
+      },
+      "required_tags": ["A1", "E"],
+      "priority": 2
+    },
+    "self": {
+      "chinese": "自身",
+      "english": "Self",
+      "description": {
+        "chinese": "個人發展、性格",
+        "english": "Personal development, character"
+      },
+      "required_tags": ["A1", "D", "M"],
+      "priority": 2
+    },
+    "reputation": {
+      "chinese": "名譽",
+      "english": "Reputation",
+      "description": {
+        "chinese": "學業、社會地位",
+        "english": "Education, social status"
+      },
+      "required_tags": ["A1", "H"],
+      "priority": 2
+    },
+    "travel": {
+      "chinese": "出行",
+      "english": "Travel",
+      "description": {
+        "chinese": "旅行、搬遷、移民",
+        "english": "Travel, relocation, immigration"
+      },
+      "required_tags": ["A1", "P"],
+      "priority": 2
+    }
+  },
+  "time_range_mapping": {
+    "T1": {
+      "chinese": "短期",
+      "english": "Short-term",
+      "description": {
+        "chinese": "1-3個月",
+        "english": "1-3 months"
+      },
+      "keywords": {
+        "chinese": ["近期", "短期", "這個月", "下個月", "最近"],
+        "english": ["recent", "short-term", "this month", "next month", "soon"]
+      }
+    },
+    "T2": {
+      "chinese": "中期", 
+      "english": "Medium-term",
+      "description": {
+        "chinese": "3-12個月",
+        "english": "3-12 months"
+      },
+      "keywords": {
+        "chinese": ["今年", "半年", "中期", "年內"],
+        "english": ["this year", "half year", "medium-term", "within the year"]
+      }
+    },
+    "T3": {
+      "chinese": "長期",
+      "english": "Long-term",
+      "description": {
+        "chinese": "1年以上",
+        "english": "More than 1 year"
+      },
+      "keywords": {
+        "chinese": ["長期", "未來", "長遠", "幾年"],
+        "english": ["long-term", "future", "long-term", "years"]
+      }
+    }
+  },
+  "semantic_anchors": {
+    "A1": {
+      "name": "fortune_level",
+      "chinese": "求籤吉凶",
+      "english": "Fortune Level",
+      "description": {
+        "chinese": "靈籤的基本吉凶等級",
+        "english": "Basic fortune level of the divination stick"
+      }
+    },
+    "A2-1": {
+      "name": "fortune_poem", 
+      "chinese": "算命籤詩",
+      "english": "Fortune Poem",
+      "description": {
+        "chinese": "籤詩原文",
+        "english": "Original fortune poem"
+      }
+    },
+    "A2-2": {
+      "name": "poem_explanation", 
+      "chinese": "黃大仙算命解籤詩",
+      "english": "Wong Tai Sin Fortune Interpretation",
+      "description": {
+        "chinese": "籤詩的詳細解釋",
+        "english": "Detailed explanation of the fortune poem"
+      }
+    },
+    "A3": {
+      "name": "yearly_fortune",
+      "chinese": "流年",
+      "english": "Yearly Fortune",
+      "description": {
+        "chinese": "年度運勢分析",
+        "english": "Annual fortune analysis"
+      }
+    },
+    "B": {
+      "name": "career",
+      "chinese": "事業",
+      "english": "Career",
+      "description": {
+        "chinese": "工作、職場相關",
+        "english": "Work, workplace related"
+      }
+    },
+    "C": {
+      "name": "wealth",
+      "chinese": "財富", 
+      "english": "Wealth",
+      "description": {
+        "chinese": "金錢、財運相關",
+        "english": "Money, wealth related"
+      }
+    },
+    "D": {
+      "name": "personal",
+      "chinese": "自身",
+      "english": "Self",
+      "description": {
+        "chinese": "個人發展、性格",
+        "english": "Personal development, character"
+      }
+    },
+    "E": {
+      "name": "family",
+      "chinese": "家庭",
+      "english": "Family",
+      "description": {
+        "chinese": "家庭關係、子女",
+        "english": "Family relationships, children"
+      }
+    },
+    "F": {
+      "name": "love",
+      "chinese": "姻緣",
+      "english": "Love & Marriage",
+      "description": {
+        "chinese": "愛情、婚姻",
+        "english": "Love, marriage"
+      }
+    },
+    "G": {
+      "name": "migration",
+      "chinese": "移居",
+      "english": "Migration",
+      "description": {
+        "chinese": "搬遷、移民",
+        "english": "Relocation, immigration"
+      }
+    },
+    "H": {
+      "name": "reputation",
+      "chinese": "名譽",
+      "english": "Reputation",
+      "description": {
+        "chinese": "學業、社會地位",
+        "english": "Education, social status"
+      }
+    },
+    "I": {
+      "name": "health",
+      "chinese": "健康",
+      "english": "Health",
+      "description": {
+        "chinese": "身體狀況",
+        "english": "Physical condition"
+      }
+    },
+    "J": {
+      "name": "friendship",
+      "chinese": "友誼",
+      "english": "Friendship",
+      "description": {
+        "chinese": "人際關係、朋友",
+        "english": "Interpersonal relationships, friends"
+      }
+    },
+    "K": {
+      "name": "feng_shui",
+      "chinese": "風水",
+      "english": "Feng Shui",
+      "description": {
+        "chinese": "風水、環境",
+        "english": "Feng shui, environment"
+      }
+    },
+    "L": {
+      "name": "lost_items",
+      "chinese": "遺失",
+      "english": "Lost Items",
+      "description": {
+        "chinese": "失物、尋回",
+        "english": "Lost items, recovery"
+      }
+    },
+    "M": {
+      "name": "personal_alt",
+      "chinese": "自身",
+      "english": "Self (Alternative)",
+      "description": {
+        "chinese": "個人發展（與D類似）",
+        "english": "Personal development (similar to D)"
+      }
+    },
+    "N": {
+      "name": "weather",
+      "chinese": "天時",
+      "english": "Timing",
+      "description": {
+        "chinese": "天氣、時機",
+        "english": "Weather, timing"
+      }
+    },
+    "O": {
+      "name": "business",
+      "chinese": "交易",
+      "english": "Business",
+      "description": {
+        "chinese": "商業、買賣",
+        "english": "Commerce, trading"
+      }
+    },
+    "P": {
+      "name": "travel",
+      "chinese": "出行",
+      "english": "Travel",
+      "description": {
+        "chinese": "旅行、交通",
+        "english": "Travel, transportation"
+      }
+    }
+  }
+}

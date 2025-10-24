@@ -31,6 +31,21 @@ class LocalRepository : Repository {
 		)
 	}
 
+	/**
+	 * 移除內容中的標籤，保持原始顯示格式
+	 * Version 21 專用：過濾 [A1], [A2-1], [A2-2], [A3], [B], [C] 等標籤
+	 */
+	private fun removeTagsFromContent(content: String): String {
+		if (content.isBlank()) return content
+		
+		return content.lines().joinToString("\n") { line ->
+			// 移除行首的標籤，如 [A1], [A2-1], [A2-2] 等
+			line.replace(Regex("^\\[A\\d+(-\\d+)?\\]"), "")
+				.replace(Regex("^\\[[A-P]\\]"), "")
+				.trim()
+		}.trim()
+	}
+
 	private fun decodeWithBestCharset(bytes: ByteArray): String? {
 		val candidates = mutableListOf<Charset>()
 		candidates += StandardCharsets.UTF_8
@@ -76,7 +91,12 @@ class LocalRepository : Repository {
 	private fun tryLoadFromCsv(): Boolean {
 		return try {
 			val context = WtsApp.instance
-			val assetName = "fortunes_source.csv"
+			// Version 21 使用標籤化的籤文數據文件
+			val assetName = if (com.example.wtsaskingforsignature.BuildConfig.VERSION_CODE >= 21) {
+				"fortunes_source_v21.csv"
+			} else {
+				"fortunes_source.csv"
+			}
 			val assetList = context.assets.list("")?.toList() ?: emptyList()
 			if (!assetList.contains(assetName)) {
 				WtsLogger.i("CSV not found: $assetName, skip")
@@ -296,7 +316,16 @@ class LocalRepository : Repository {
 		} else {
 			WtsLogger.i("Found fortune: ${fortune.title}")
 		}
-		fortune ?: fortunes.first { it.id == 1 } // fallback to first fortune
+		val result = fortune ?: fortunes.first { it.id == 1 } // fallback to first fortune
+		
+		// Version 21: 過濾標籤，保持原始顯示格式
+		if (com.example.wtsaskingforsignature.BuildConfig.VERSION_CODE >= 21) {
+			result.copy(
+				content = removeTagsFromContent(result.content ?: "")
+			)
+		} else {
+			result
+		}
 	}
 
 	override suspend fun cupResult(): Result<CupResultResponse> = runCatching {

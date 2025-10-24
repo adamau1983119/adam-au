@@ -2,24 +2,24 @@ package com.example.wtsaskingforsignature.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Morandi（莫蘭迪）偏藕粉色系（主色提升飽和度以增加辨識度）
-val MdPrimary = Color(0xFFE1B0B6)      // 主色：更飽和的藕粉玫瑰
-val MdOnPrimary = Color(0xFFFFFFFF)     // 主色上的文字
-val MdSecondary = Color(0xFFF1D4DA)     // 次色：淡藕粉（更亮）
-val MdBackground = Color(0xFFF5EFEF)    // 背景：暖淡粉灰
-val MdSurface = Color(0xFFF1EBEC)       // 表面/卡片（更亮以突出卡片）
-val MdOnSurface = Color(0xFF1E1B1C)     // 表面文字
-val MdOutline = Color(0xFFD8C8CC)       // 邊框/分隔
+// Version 21 優化：Morandi（莫蘭迪）偏藕粉色系（提升對比度和視覺層次）
+val MdPrimary = Color(0xFFD4A5AC)      // 主色：更深的藕粉玫瑰，提升對比度
+val MdOnPrimary = Color(0xFFFFFFFF)     // 主色上的文字：保持純白
+val MdSecondary = Color(0xFFE8C8CE)     // 次色：適中的藕粉，平衡視覺層次
+val MdBackground = Color(0xFFF8F2F3)    // 背景：更亮的暖淡粉，提升可讀性
+val MdSurface = Color(0xFFF3EDEE)       // 表面/卡片：優化對比度，突出內容
+val MdOnSurface = Color(0xFF2A1F20)     // 表面文字：加深顏色，提升可讀性
+val MdOutline = Color(0xFFD1C2C6)       // 邊框/分隔：優化對比度
 
-// 漸層背景（接近設計稿的柔和粉色漸層）
-val MdGradientTop = Color(0xFFF7ECEB)
-val MdGradientBottom = Color(0xFFF1E4E7)
+// 漸層背景（Version 21 優化：更柔和的漸層過渡）
+val MdGradientTop = Color(0xFFF9F0F1)
+val MdGradientBottom = Color(0xFFF2E6E8)
 
-// 深色模式對應（針對黑色背景手機設定優化，確保文字清楚可見）
-val MdPrimaryDark = Color(0xFFE1B0B6)      // 主色保持亮度
-val MdOnPrimaryDark = Color(0xFF000000)     // 主色上的文字改為純黑
-val MdSecondaryDark = Color(0xFFF1D4DA)     // 次色保持亮度
-val MdBackgroundDark = Color(0xFF000000)    // 背景改為純黑，配合手機設定
-val MdSurfaceDark = Color(0xFF2A2A2A)       // 表面色改為深灰，與純黑背景形成對比
-val MdOnSurfaceDark = Color(0xFFFFFFFF)     // 表面文字改為純白
-val MdOutlineDark = Color(0xFF666666)       // 邊框改為更亮的灰色，增加可見性
+// Version 21 優化：深色模式對應（調整文字顏色，避免白色文字）
+val MdPrimaryDark = Color(0xFFD4A5AC)      // 主色：與淺色模式保持一致
+val MdOnPrimaryDark = Color(0xFF2A1F20)     // 主色上的文字：改為深色，與淺色模式一致
+val MdSecondaryDark = Color(0xFFE8C8CE)     // 次色：與淺色模式保持一致
+val MdBackgroundDark = Color(0xFF121212)    // 背景：使用Material Design深色背景
+val MdSurfaceDark = Color(0xFF1E1E1E)       // 表面色：優化對比度，提升層次感
+val MdOnSurfaceDark = Color(0xFF2A1F20)     // 表面文字：改為深色，與淺色模式一致
+val MdOutlineDark = Color(0xFF4A4A4A)       // 邊框：優化對比度，提升可見性

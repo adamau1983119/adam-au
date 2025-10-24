@@ -22,15 +22,15 @@ android {
         applicationId = "com.wts.dsfortune"
         minSdk = 26
         targetSdk = 36
-        versionCode = 21
-        versionName = "1.1.5"
+        versionCode = 20
+        versionName = "1.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
         // 版本資訊
-        buildConfigField("String", "VERSION_NAME", "\"1.1.5\"")
-        buildConfigField("int", "VERSION_CODE", "21")
+        buildConfigField("String", "VERSION_NAME", "\"1.1.4\"")
+        buildConfigField("int", "VERSION_CODE", "20")
         buildConfigField("String", "BUILD_DATE", "\"${getBuildDate()}\"")
         buildConfigField("String", "BUILD_TYPE", "\"release\"")
     }
